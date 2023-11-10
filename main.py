@@ -42,14 +42,29 @@ while isStart :
     screen.blit(StartButton,(width / 2 - 300, heigth / 2 - 130))
     pygame.display.update()
 
-while 1 :
+isChoose = True
+PlayresN = 0
+while isChoose :
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+            PNBtnPos = pygame.mouse.get_pos()
+            if PNBtnPos[0] >= width / 3 - 200 and PNBtnPos[0] <= width / 3 and PNBtnPos[1] >= 300 and PNBtnPos[1] <= 550 :
+                PlayresN = 2
+                isChoose = False
+            if PNBtnPos[0] >= width / 2 - 100 and PNBtnPos[0] <= width / 2 + 100 and PNBtnPos[1] >= 300 and PNBtnPos[1] <= 550 :
+                PlayresN = 3
+                isChoose = False
+            if PNBtnPos[0] >= width / 3 * 2 and PNBtnPos[0] <= width / 3 * 2 + 200 and PNBtnPos[1] >= 300 and PNBtnPos[1] <= 550 :
+                PlayresN = 4
+                isChoose = False
     screen.fill(White)
     screen.blit(GameNumtext,(width / 2-400, 100))
     screen.blit(GameNumButton2,(width / 3 - 200, 300))
     screen.blit(GameNumButton3,(width / 2 - 100, 300))
     screen.blit(GameNumButton4,(width / 3 * 2, 300))
     pygame.display.update()
+
+players.players

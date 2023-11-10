@@ -6,3 +6,4 @@ class Player :
         self.uninhabitedIsland = 0
         self.pos = 0
         self.type = 0
+players = []
