@@ -1,4 +1,4 @@
-import pygame, sys, random, players, blocks, cards, systems
+import pygame, sys, random, players, blocks, cards, dice, systems
 from pygame.locals import *
 pygame.init()
 width = 1600
@@ -37,7 +37,6 @@ while isStartDown :
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
             stbtn_pos = pygame.mouse.get_pos()
-            print(stbtn_pos)
             if stbtn_pos[0] >= width / 2 - 300 and stbtn_pos[0] <= width / 2 + 300 and stbtn_pos[1] >= heigth / 2 - 130 and stbtn_pos[1] <= heigth / 2 + 130 :
                 isStartDown = False
 
@@ -72,12 +71,14 @@ while isChoose :
 for i in range(PlayresNum) :
     players.players.append(players.Player())
 
-isStart = 0
-while 1 :
-    clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-    def 
-    screen.fill((0,0,0))
-    pygame.display.update()
+a = random.randint(1,6)
+b = random.randint(1,6)
+print(a,b,systems.ifDouble(a,b))
+#isStart = 0
+#while 1 :
+#    clock.tick(60)
+#    for event in pygame.event.get():
+#        if event.type == pygame.QUIT:
+#            sys.exit()
+#    screen.fill((0,0,0))
+#    pygame.display.update()
