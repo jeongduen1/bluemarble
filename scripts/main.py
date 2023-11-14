@@ -1,4 +1,4 @@
-import pygame, sys, random, players, blocks, cards, dice, systems
+import pygame, sys, random, players, blocks, cards, systems
 from pygame.locals import *
 pygame.init()
 width = 1600
@@ -6,6 +6,10 @@ heigth = 900
 pygame.display.set_caption("BlueMarble")
 screen = pygame.display.set_mode((width, heigth))
 clock = pygame.time.Clock()
+
+def roll(arr) :
+    arr[0] = random.randint(1,6)
+    arr[1] = random.randint(1,6)
 
 White = (255,255,255)
 Black = (0,0,0)
@@ -24,7 +28,13 @@ GameNumButton4 = pygame.transform.scale(GameNumButton4,(200,250))
 GameNumfont = pygame.font.Font("fonts/CookieRun Regular.ttf", 30)
 GameNumtext = GameNumfont.render("플레이할 인원수를 선택하세요.", False, Black)
 GameNumtext = pygame.transform.scale(GameNumtext,(800,100))
-#
+#플레이어 이미지
+Player1Image = pygame.image.load("images/p1.png").convert()
+#말판 이미지
+mapImage = pygame.image.load("images/mapimage.png").convert()
+mapImage = pygame.transform.scale(mapImage,(heigth,heigth))
+
+
 
 cards.CardShuffle(cards.cards)
 blocks.MapSet(blocks.maps)
@@ -71,14 +81,13 @@ while isChoose :
 for i in range(PlayresNum) :
     players.players.append(players.Player())
 
-a = random.randint(1,6)
-b = random.randint(1,6)
-print(a,b,systems.ifDouble(a,b))
-#isStart = 0
-#while 1 :
-#    clock.tick(60)
-#    for event in pygame.event.get():
-#        if event.type == pygame.QUIT:
-#            sys.exit()
-#    screen.fill((0,0,0))
-#    pygame.display.update()
+dice = [0,0]
+while 1 :
+    clock.tick(60)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+    screen.fill((125,178,73))
+    screen.blit(mapImage,(350,0))
+    
+    pygame.display.update()
