@@ -30,20 +30,22 @@ GameNumtext = GameNumfont.render("플레이할 인원수를 선택하세요.", F
 GameNumtext = pygame.transform.scale(GameNumtext,(800,100))
 #플레이어 이미지
 Player1Image = pygame.image.load("images/p1.png").convert()
+Player1Image = pygame.transform.scale(Player1Image,(100,100))
 #말판 이미지
-mapImage = pygame.image.load("images/mapimage.png").convert()
+mapImage = pygame.image.load("images/mapimage.png")
 mapImage = pygame.transform.scale(mapImage,(heigth,heigth))
 #레드팀 상태 UI
-RedTeamUI = pygame.image.load("images/RedPlayerUI.png").convert()
+RedTeamUI = pygame.image.load("images/RedTeamUI.png").convert()
 RedTeamUI = pygame.transform.scale(RedTeamUI,(350,200))
-
+#주사위 버튼
+RollButton = pygame.image.load("images/RollButton.png").convert()
+RollButton = pygame.transform.scale(RollButton,(300,90))
 
 cards.CardShuffle(cards.cards)
 blocks.MapSet(blocks.maps)
 
 isStartDown = True
 while isStartDown :
-    clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -59,7 +61,6 @@ while isStartDown :
 isChoose = True
 PlayresNum = 1
 while isChoose :
-    clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -92,5 +93,7 @@ while 1 :
     screen.fill((125,178,73))
     screen.blit(mapImage,(350,0))
     screen.blit(RedTeamUI,(0,0))
-    #screen.blit(noticeTurntext,(width/2,heigth/2))
+    screen.blit(Player1Image,(1110,800))
+    Player1Image.set_colorkey(Black)
+    screen.blit(RollButton,(1300,410))
     pygame.display.update()
