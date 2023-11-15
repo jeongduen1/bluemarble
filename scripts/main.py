@@ -33,7 +33,9 @@ Player1Image = pygame.image.load("images/p1.png").convert()
 #말판 이미지
 mapImage = pygame.image.load("images/mapimage.png").convert()
 mapImage = pygame.transform.scale(mapImage,(heigth,heigth))
-
+#레드팀 상태 UI
+RedTeamUI = pygame.image.load("images/RedPlayerUI.png").convert()
+RedTeamUI = pygame.transform.scale(RedTeamUI,(350,200))
 
 
 cards.CardShuffle(cards.cards)
@@ -89,5 +91,6 @@ while 1 :
             sys.exit()
     screen.fill((125,178,73))
     screen.blit(mapImage,(350,0))
-    
+    screen.blit(RedTeamUI,(0,0))
+    #screen.blit(noticeTurntext,(width/2,heigth/2))
     pygame.display.update()
