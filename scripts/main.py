@@ -40,17 +40,23 @@ RuleButton = pygame.transform.scale(RuleButton,(400,130))
 #게임 규칙 UI
 GameRuleP1 = pygame.image.load("images/UI/GameRulePage1.png").convert()
 GameRuleP2 = pygame.image.load("images/UI/GameRulePage2.png").convert()
-#게임 메뉴 버튼
+#게임 규칙 메뉴 버튼
+#다음페이지
 GameRuleMenuNextPageBtn = pygame.image.load("images/buttons/NextPageButton.png").convert()
 GameRuleMenuNextPageBtn = pygame.transform.scale(GameRuleMenuNextPageBtn,(50,50))
 NextPageBtn_spawnPos = (width/2+250,height-100)
 NextPageBtn_Pos = (width/2+275,height-75)
 GameRuleMenuNextPageBtn.set_colorkey(White)
+#이전페이지
 GameRuleMenuBackPageBtn = pygame.image.load("images/buttons/BackPageButton.png").convert()
 GameRuleMenuBackPageBtn = pygame.transform.scale(GameRuleMenuBackPageBtn,(50,50))
 GameRuleMenuBackPageBtn.set_colorkey(White)
 BackPageBtn_spawnPos = (width/2-300,height-100)
 BackPageBtn_Pos = (width/2-275,height-75)
+#나가기 버튼
+GameRuleExitBtn = pygame.image.load("images/buttons/ExitButton.png").convert()
+GameRuleExitBtn = pygame.transform.scale(GameRuleExitBtn,(100,100))
+GameRuleExitBtn_pos =()
 #게임 인원수 선택 버튼
 GameNumButton2 = pygame.image.load("images/buttons/Two.png").convert()
 GameNumButton2 = pygame.transform.scale(GameNumButton2,(200,250))
@@ -104,52 +110,67 @@ RollButton = pygame.transform.scale(RollButton,(300,90))
 cards.CardShuffle(cards.cards)
 blocks.MapSet(blocks.maps)
 
-isStartBtnDown = True
-isClickedRuleButton = False
-while isStartBtnDown :
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
-            StartMenuBtn_pos = pygame.mouse.get_pos()
-            if distance(StartMenuBtn_pos[0],StartMenuBtn_pos[1],width/2,height/2-50) <= 100:
-                isStartBtnDown = False
-            if width/2+200 >= StartMenuBtn_pos[0] >= width/2-200 and height/2+280 >= StartMenuBtn_pos[1] >= height/2+150:
-                isStartBtnDown = False
-                print(isStartBtnDown)
-                isClickedRuleButton = True
-    screen.fill(White)
-    screen.blit(GameMenu,(0,0))
-    screen.blit(StartButton,(width/2-100,height/2-150))
-    screen.blit(RuleButton,(width/2-200,height/2+150))
-    pygame.display.update()
+def Menu() :
+    isRun = True
+    type = 1
+    while isRun :
+        clock.tick(60)
+        match type :
+            case 1:
+                isRunOne = True
+                while isRunOne :
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            sys.exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                            StartMenuBtn_pos = pygame.mouse.get_pos()
+                            if distance(StartMenuBtn_pos[0],StartMenuBtn_pos[1],width/2,height/2-50) <= 100:
+                                type = 3
+                                isRunOne = False
+                            if width/2+200 >= StartMenuBtn_pos[0] >= width/2-200 and height/2+280 >= StartMenuBtn_pos[1] >= height/2+150:
+                                type = 2
+                                isRunOne = False
+                    screen.fill(White)
+                    screen.blit(GameMenu,(0,0))
+                    screen.blit(StartButton,(width/2-100,height/2-150))
+                    screen.blit(RuleButton,(width/2-200,height/2+150))
+                    pygame.display.update()
+            case 2:
+                isRunTwo = True
+                RulePage = 1
+                while isRunTwo :
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            sys.exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                            RuleMenuBtn_pos = pygame.mouse.get_pos()
+                            if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],NextPageBtn_Pos[0],NextPageBtn_Pos[1]) <= 25 :
+                                RulePage += 1
+                            if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],BackPageBtn_Pos[0],BackPageBtn_Pos[1]) <= 25 :
+                                if RulePage == 1 :
+                                    RulePage = 1
+                                else :
+                                    RulePage -= 1
+                            #if distance() <= :
+                            #    isRunTwo = False
+                            #    Type = 1
+                    screen.fill((125,178,73))
+                    match RulePage :
+                        case 1:
+                            screen.blit(GameRuleP1,(width/2-400,0))
+                        case 2:
+                            screen.blit(GameRuleP2,(width/2-400,0))
+                    if RulePage == 1 :
+                        screen.blit(GameRuleMenuNextPageBtn,NextPageBtn_spawnPos)
+                        screen.blit
+                    else :
+                        screen.blit(GameRuleMenuNextPageBtn,NextPageBtn_spawnPos)
+                        screen.blit(GameRuleMenuBackPageBtn,BackPageBtn_spawnPos)
+                    pygame.display.update()
+            #case 3:
 
-RulePage = 1
-while isClickedRuleButton :
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
-            RuleMenuBtn_pos = pygame.mouse.get_pos()
-            if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],NextPageBtn_Pos[0],NextPageBtn_Pos[1]) <= 25 :
-                RulePage += 1
-            if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],BackPageBtn_Pos[0],BackPageBtn_Pos[1]) <= 25 :
-                if RulePage == 1 :
-                    RulePage = 1
-                else :
-                    RulePage -= 1
-    screen.fill((125,178,73))
-    match RulePage :
-        case 1:
-            screen.blit(GameRuleP1,(width/2-400,0))
-        case 2:
-            screen.blit(GameRuleP2,(width/2-400,0))
-    if RulePage == 1 :
-        screen.blit(GameRuleMenuNextPageBtn,NextPageBtn_spawnPos)
-    else :
-        screen.blit(GameRuleMenuNextPageBtn,NextPageBtn_spawnPos)
-        screen.blit(GameRuleMenuBackPageBtn,BackPageBtn_spawnPos)
-    pygame.display.update()
+
+Menu()
 
 isChoose = True
 PlayresNum = 1
