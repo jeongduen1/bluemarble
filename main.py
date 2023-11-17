@@ -111,16 +111,16 @@ GameNumtext = GameNumfont.render("플레이할 인원수를 선택하세요.", F
 GameNumtext = pygame.transform.scale(GameNumtext,(800,100))
 #플레이어 이미지
 Player1Image = pygame.image.load("images/players/p1.png").convert()
-Player1Image = pygame.transform.scale(Player1Image,(100,100))
+Player1Image = pygame.transform.scale(Player1Image,(75,75))
 Player1Image.set_colorkey(Black)
-Player2Image = pygame.image.load("images/players/p1.png").convert()
-Player2Image = pygame.transform.scale(Player1Image,(100,100))
+Player2Image = pygame.image.load("images/players/p2.png").convert()
+Player2Image = pygame.transform.scale(Player2Image,(75,75))
 Player2Image.set_colorkey(Black)
-Player3Image = pygame.image.load("images/players/p1.png").convert()
-Player3Image = pygame.transform.scale(Player1Image,(100,100))
+Player3Image = pygame.image.load("images/players/p3.png").convert()
+Player3Image = pygame.transform.scale(Player3Image,(75,75))
 Player3Image.set_colorkey(Black)
-Player4Image = pygame.image.load("images/players/p1.png").convert()
-Player4Image = pygame.transform.scale(Player1Image,(100,100))
+Player4Image = pygame.image.load("images/players/p4.png").convert()
+Player4Image = pygame.transform.scale(Player4Image,(75,75))
 Player4Image.set_colorkey(Black)
 #말판 이미지
 mapImage = pygame.image.load("images/board/mapimage.png").convert()
@@ -284,10 +284,111 @@ def MyTurnMakerDraw(num):
             case 4 :
                 screen.blit(MyTurnMarker,TurnMarker_YellowUIpos)
 
+block_posX = [1150,1050,960,880,800,720,635,550,430]
+block_posY = [800,700,650,600,550,500,450,400,350]
+def playerPosCalX(pos):
+        if pos <= 8 :
+            match pos :
+                case 0:
+                    return 0
+                case 1:
+                    return 1
+                case 2:
+                    return 2
+                case 3:
+                    return 3
+                case 4:
+                    return 4
+                case 5:
+                    return 5
+                case 6:
+                    return 6
+                case 7:
+                    return 7
+                case 8:
+                    return 8
+        elif 17 <= pos <= 24 :
+            match pos :
+                case 17:
+                    return 7
+                case 18:
+                    return 6
+                case 19:
+                    return 5
+                case 20:
+                    return 4
+                case 21:
+                    return 3
+                case 22:
+                    return 2
+                case 23:
+                    return 1
+                case 24:
+                    return 0
+        else :
+            if 9 <= pos <= 16 :
+                return 8
+            else :
+                return 0
+def playerPosCalY(pos):
+        if 9 <= pos <= 16 :
+            match pos :
+                case 9:
+                    return 0 
+                case 10:
+                    return 1
+                case 11:
+                    return 2
+                case 12:
+                    return 3
+                case 13:
+                    return 4
+                case 14:
+                    return 5
+                case 15:
+                    return 6
+                case 16:
+                    return 7
+                case 17:
+                    return 8
+        elif 25 <= pos :
+            match pos :
+                case 25:
+                    return 7
+                case 26:
+                    return 6
+                case 27:
+                    return 5
+                case 28:
+                    return 4
+                case 29:
+                    return 3
+                case 30:
+                    return 2
+                case 31:
+                    return 1
+                case 32:
+                    return 0
+        else :
+            if pos <= 8 :
+                return 0
+            else :
+                return 8
+
 def PlayersDraw(num) :
     match num :
-        case 1 :
-            screen.blit(Player1Image,)
+        case 2 :
+            screen.blit(Player1Image,(block_posX[playerPosCalX(players[0].pos)]-15-20,block_posY[playerPosCalY(players[0].pos)]-15))
+            screen.blit(Player2Image,(block_posX[playerPosCalX(players[1].pos)]-15-10,block_posY[playerPosCalY(players[1].pos)]-15))
+        case 3 :
+            screen.blit(Player1Image,(block_posX[playerPosCalX(players[0].pos)]-15-20,block_posY[playerPosCalY(players[0].pos)]-15))
+            screen.blit(Player2Image,(block_posX[playerPosCalX(players[1].pos)]-15-10,block_posY[playerPosCalY(players[1].pos)]-15))
+            screen.blit(Player3Image,(block_posX[playerPosCalX(players[2].pos)]-15,block_posY[playerPosCalY(players[2].pos)]-15))
+        case 4 :
+            screen.blit(Player1Image,(block_posX[playerPosCalX(players[0].pos)]-15-20,block_posY[playerPosCalY(players[0].pos)]-15))
+            screen.blit(Player2Image,(block_posX[playerPosCalX(players[1].pos)]-15-10,block_posY[playerPosCalY(players[1].pos)]-15))
+            screen.blit(Player3Image,(block_posX[playerPosCalX(players[2].pos)]-15,block_posY[playerPosCalY(players[2].pos)]-15))
+            screen.blit(Player4Image,(block_posX[playerPosCalX(players[3].pos)]-15+10,block_posY[playerPosCalY(players[3].pos)]-15))
 
 ###################################로직###################################
 CardShuffle(cards)
@@ -374,6 +475,9 @@ while isRunTwo :
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                    btnClick_pos = pygame.mouse.get_pos()
+                    print(btnClick_pos[0],btnClick_pos[1])
         match EventType :
             case 1:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
@@ -403,6 +507,7 @@ while isRunTwo :
     screen.fill((125,178,73))
     #게임오브젝트
     screen.blit(mapImage,(350,0))
+    PlayersDraw(PlayresNum)
     #UI
     teamUIBlit(PlayresNum)
     MyTurnMakerDraw(Turn)
