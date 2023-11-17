@@ -308,16 +308,9 @@ while isRun :
                         sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         RuleMenuBtn_pos = pygame.mouse.get_pos()
-                        if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],NextPageBtn_Pos[0],NextPageBtn_Pos[1]) <= 25 :
-                            RulePage += 1
-                        if distance(RuleMenuBtn_pos[0],RuleMenuBtn_pos[1],BackPageBtn_Pos[0],BackPageBtn_Pos[1]) <= 25 :
-                            if RulePage == 1 :
-                                RulePage = 1
-                            else :
-                                RulePage -= 1
-                        if 175 <= RuleMenuBtn_pos[0] <= 505 and 580 <= RuleMenuBtn_pos[1] <= 700 :
+                        if 505 >= RuleMenuBtn_pos[0] >= 175 and 700 >= RuleMenuBtn_pos[1] >= 580 :
+                            type = 1
                             isRunTwo = False
-                            Type = 1
                 screen.fill((125,178,73))
                 screen.blit(GameRuleMenuBoard,(52,75))
                 screen.blit(RuleMenuButton1,(175,230))
