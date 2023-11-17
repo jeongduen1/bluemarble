@@ -28,6 +28,7 @@ class Block :
         self.buildings = []
         self.belong = 0
         self.tall = 0
+        self.pos = []
         self.type = 0
     def set_price(self,price) :
         self.price = price
@@ -59,6 +60,7 @@ def MapSet(map) :
             map[j+i].set_price(price)
             map[j+i].set_type(0)
         i += 3
+
 ###################################색###################################
 
 White = (255,255,255)
@@ -95,7 +97,7 @@ GameRuleMenuBackPageBtn = pygame.transform.scale(GameRuleMenuBackPageBtn,(50,50)
 GameRuleMenuBackPageBtn.set_colorkey(White)
 BackPageBtn_spawnPos = (width/2-300,height-100)
 BackPageBtn_Pos = (width/2-275,height-75)
-GameRuleExitBtn_pos =(0,0)
+GameRuleExitBtn_pos = (0,0)
 #게임 인원수 선택 버튼
 GameNumButton2 = pygame.image.load("images/buttons/Two.png").convert()
 GameNumButton2 = pygame.transform.scale(GameNumButton2,(200,250))
@@ -110,15 +112,21 @@ GameNumtext = pygame.transform.scale(GameNumtext,(800,100))
 #플레이어 이미지
 Player1Image = pygame.image.load("images/players/p1.png").convert()
 Player1Image = pygame.transform.scale(Player1Image,(100,100))
+Player1Image.set_colorkey(Black)
 Player2Image = pygame.image.load("images/players/p1.png").convert()
 Player2Image = pygame.transform.scale(Player1Image,(100,100))
+Player2Image.set_colorkey(Black)
 Player3Image = pygame.image.load("images/players/p1.png").convert()
 Player3Image = pygame.transform.scale(Player1Image,(100,100))
+Player3Image.set_colorkey(Black)
 Player4Image = pygame.image.load("images/players/p1.png").convert()
-Player5Image = pygame.transform.scale(Player1Image,(100,100))
+Player4Image = pygame.transform.scale(Player1Image,(100,100))
+Player4Image.set_colorkey(Black)
 #말판 이미지
 mapImage = pygame.image.load("images/board/mapimage.png").convert()
 mapImage = pygame.transform.scale(mapImage,(height,height))
+
+
 #Start텍스트
 StartText = pygame.image.load("images/UI/StartText.png").convert()
 StartText.set_colorkey(White)
@@ -208,7 +216,10 @@ def roll(arr) :
 def distance(x1, y1, x2, y2):
     result = math.sqrt( math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
     return result
-
+#def playerPos(num) :
+    #match num :
+        #case 0:
+        #case 1:
 #출력#
 def teamUIBlit(num) :
     match num :
@@ -273,9 +284,16 @@ def MyTurnMakerDraw(num):
             case 4 :
                 screen.blit(MyTurnMarker,TurnMarker_YellowUIpos)
 
+def PlayersDraw(num) :
+    match num :
+        case 1 :
+            screen.blit(Player1Image,)
+
 ###################################로직###################################
 CardShuffle(cards)
 MapSet(maps)
+for i in range(32) :
+    print(maps[i].pos)
 isRun = True
 type = 1
 while isRun :
@@ -308,7 +326,7 @@ while isRun :
                         sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         RuleMenuBtn_pos = pygame.mouse.get_pos()
-                        if 505 >= RuleMenuBtn_pos[0] >= 175 and 700 >= RuleMenuBtn_pos[1] >= 580 :
+                        if 560 >= RuleMenuBtn_pos[0] >= 175 and 720 >= RuleMenuBtn_pos[1] >= 580 :
                             type = 1
                             isRunTwo = False
                 screen.fill((125,178,73))
@@ -388,6 +406,7 @@ while isRunTwo :
     #UI
     teamUIBlit(PlayresNum)
     MyTurnMakerDraw(Turn)
+
     if isRoll:
         DrawDice(dice[0],dice[1])
     match EventType :
