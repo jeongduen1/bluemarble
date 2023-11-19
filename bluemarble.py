@@ -12,15 +12,25 @@ White = (255,255,255)
 BackGroundColor = (125,178,73)
 Black = (0,0,0)
 #Classes
-
+#player
 class Player :
     def __init__(self) :
-        self.fortune = 0
+        self.fortune = 500000
         self.ownedLands = []
         self.items = []
         self.pos = [0,0]
-
+#block
+class Block :
+    def __init__(self) :
+        self.type = 0
+        self.price = 0
+        self.pos = [0]
+        self.owned = 0
+        self.building = 0
 #Defines
+def SetPlayers(arr,num) :
+    for i in range(num) :
+        arr.append(Player())
 def distance(pos1,pos2):
     result = math.sqrt( math.pow(pos1[0] - pos2[0], 2) + math.pow(pos1[1] - pos2[1], 2))
     return result
@@ -68,35 +78,34 @@ def MyTurnMakerDraw(num):
 #Menu Images
 GameMenuBoard = pygame.image.load("images/UI/GameMenu.png").convert()
 GameMenuBoard_pos = (0,0)
-MenuStartButton = pygame.image.load("images/buttons/StartButton.png").convert()
-MenuStartButton = pygame.transform.scale(MenuStartButton,(400,150))
-MenuStartButton.set_colorkey(White)
-MenuStartButton_pos1 = (500, 347)
-MenuStartButton_pos2 = (1100, 466)
-GameRuleButton = pygame.image.load("images/buttons/GameRuleButton.png").convert()
-GameRuleButton = pygame.transform.scale(GameRuleButton,(400,150))
-GameRuleButton_pos1 = (500,468)
-GameRuleButton_pos2 = (1100,586)
-MenuExitButton = pygame.image.load("images/buttons/MenuExit.png").convert()
-MenuExitButton = pygame.transform.scale(MenuExitButton,(400,150))
-MenuExitButton_pos1 = (500,588)
-MenuExitButton_pos2 = (1100,707)
+MenuStartButton_pos1 = (562, 289)
+MenuStartButton_pos2 = (1038, 401)
+GameRuleButton_pos1 = (562, 432)
+GameRuleButton_pos2 = (1038, 545)
+MenuExitButton_pos1 = (562,566)
+MenuExitButton_pos2 = (1038,691)
 #GameRule Images
 RuleNotePage1 = pygame.image.load("images/UI/RuleNotePage1.png").convert()
-RuleNotePage2 = pygame.image.load("images/UI/RuleNotePage2.png").convert() 
+RuleNotePage2 = pygame.image.load("images/UI/RuleNotePage2.png").convert()
 RuleNotePage3 = pygame.image.load("images/UI/RuleNotePage3.png").convert()
-RuleNotePage4 = pygame.image.load("images/UI/RuleNotePage4.png").convert()
-NextPageButton = pygame.image.load("images/buttons/NextPageButton.png").convert()
-NextPageButton = pygame.transform.scale(NextPageButton,(80,80))
-NextPageButton.set_colorkey(White)
-NextPageButton_pos1 = (1150,height/2 - 40)
-NextPageButton_Cpos1 = (1190,height/2)
-NextPageButton_pos2 = (1350,height/2 - 40)
-NextPageButton_Cpos2 = (1390,height/2)
-BackMenuButton_pos1 = (525, 365)
-BackMenuButton_pos2 = (1074, 468)
-BackPage1Button_pos1 = (525, 498)
-BackPage1Button_pos2 = (1073, 599)
+NextPageButton_Cpos1 = (1187,770)
+NextPageButton_Cpos2 = (1510, 800)
+BackPageButton_Cpos = (93, 800)
+BacktoMenuButton_Cpos = (1486, 113)
+#GameNumber
+GameNumbertoMenuButton = pygame.image.load("images/buttons/GameNumbertoMenuButton.png").convert()
+GameNumbertoMenuButton = pygame.transform.scale(GameNumbertoMenuButton,(75,75))
+GameNumbertoMenuButton.set_colorkey(White)
+GameNumbertoMenuButton_pos1 = (1485,50)
+GameNumbertoMenuButton_pos2 = (1585,150)
+SelectGameNumber2 = pygame.image.load("images/UI/SelectGameNumber2.png").convert()
+SelectGameNumber3 = pygame.image.load("images/UI/SelectGameNumber3.png").convert()
+SelectGameNumber4 = pygame.image.load("images/UI/SelectGameNumber4.png").convert()
+GameNumberMinusButton_pos1 = (28, 440)
+GameNumberMinusButton_pos2 = (74, 485)
+GameNumberPlusButton_pos1 = (489, 438)
+GameNumberPlusButton_pos2 = (535, 483)
+GameNumberCheckButton_Cpos = (521, 243)
 #Game Images
 #Map Image
 mapImage = pygame.image.load("images/board/mapimage.png").convert()
@@ -122,7 +131,7 @@ YellowTeamTurnText = pygame.image.load("images/UI/YellowTeamTurnText.png").conve
 YellowTeamTurnText.set_colorkey(White)
 YellowTeamUI = pygame.image.load("images/UI/YellowTeamUI.png").convert()
 YellowTeamUI = pygame.transform.scale(YellowTeamUI,(350,200))
-#차례표식
+#TurnMarker
 TurnMarker = pygame.image.load("images/markers/TurnMarker.png").convert()
 TurnMarker = pygame.transform.scale(TurnMarker,(65,65))
 MyTurnMarker = pygame.image.load("images/markers/MyTurnMarker.png").convert()
@@ -150,16 +159,16 @@ while MenuWorking :
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         Click_pos = pygame.mouse.get_pos()
                         print(Click_pos)
-                        #RuleButton
-                        if isClickButton(GameRuleButton_pos1,GameRuleButton_pos2,Click_pos):
-                            MenuCase1Working = False
-                            Eventype = 2 #->GameRule
-                            print('Menu to GameRule')
                         #StartButton
                         if isClickButton(MenuStartButton_pos1,MenuStartButton_pos2,Click_pos):
                             MenuCase1Working = False
                             Eventype = 3 #->Game
                             print('Menu to SelectGameNumber')
+                        #RuleButton
+                        if isClickButton(GameRuleButton_pos1,GameRuleButton_pos2,Click_pos):
+                            MenuCase1Working = False
+                            Eventype = 2 #->GameRule
+                            print('Menu to GameRule')
                         #GameExitButton
                         if isClickButton(MenuExitButton_pos1,MenuExitButton_pos2,Click_pos):
                             sys.exit() #-> GameExit
@@ -183,34 +192,62 @@ while MenuWorking :
                                 if distance(NextPageButton_Cpos2,Click_pos) <= 40 :
                                     page += 1
                             case 3 :
-                                if distance(NextPageButton_Cpos2,Click_pos) <= 40 :
-                                    page += 1
-                            case 4 :
-                                if isClickButton(BackPage1Button_pos1,BackPage1Button_pos2,Click_pos):
-                                    page = 1
-                                if isClickButton(BackMenuButton_pos1,BackMenuButton_pos2,Click_pos) :
+                                if distance(BackPageButton_Cpos,Click_pos) <= 40 :
+                                    page -= 1
+                                if distance(BacktoMenuButton_Cpos,Click_pos) <= 30:
                                     Eventype = 1
-                                    MenuCase2Working = False
+                                    MenuCase2Working = False      
                 match page :
                     case 1:
                         screen.blit(RuleNotePage1,(0,0))
-                        screen.blit(NextPageButton,NextPageButton_pos1)
                     case 2:
                         screen.blit(RuleNotePage2,(0,0))
-                        screen.blit(NextPageButton,NextPageButton_pos2)
                     case 3:
                         screen.blit(RuleNotePage3,(0,0))
-                        screen.blit(NextPageButton,NextPageButton_pos2)
-                    case 4:
-                        screen.blit(RuleNotePage4,(0,0))
                 pygame.display.update()
         #GameNumber
         case 3:
+            GameNumber = 2
             while MenuCase3Working :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit()
-                
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                        Click_pos = pygame.mouse.get_pos()
+                        print(Click_pos)
+                        if isClickButton(GameNumbertoMenuButton_pos1,GameNumbertoMenuButton_pos2,Click_pos) :
+                                    Eventype = 1
+                                    MenuCase3Working = False
+                        match GameNumber :
+                            case 2 :
+                                if isClickButton(GameNumberPlusButton_pos1,GameNumberPlusButton_pos2,Click_pos) :
+                                    GameNumber += 1
+                                if distance(GameNumberCheckButton_Cpos,Click_pos) < 20 :
+                                    Eventype = 4
+                                    MenuCase3Working = False
+                            case 3 :
+                                if isClickButton(GameNumberPlusButton_pos1,GameNumberPlusButton_pos2,Click_pos) :
+                                    GameNumber += 1
+                                if isClickButton(GameNumberMinusButton_pos1,GameNumberMinusButton_pos2,Click_pos) :
+                                    GameNumber -= 1
+                                if distance(GameNumberCheckButton_Cpos,Click_pos) < 20 :
+                                    Eventype = 4
+                                    MenuCase3Working = False
+                            case 4 :
+                                if isClickButton(GameNumberMinusButton_pos1,GameNumberMinusButton_pos2,Click_pos) :
+                                    GameNumber -= 1
+                                if distance(GameNumberCheckButton_Cpos,Click_pos) < 20 :
+                                    Eventype = 4
+                                    MenuCase3Working = False
+                match GameNumber :
+                    case 2 :
+                        screen.blit(SelectGameNumber2,(0,0))
+                    case 3 :
+                        screen.blit(SelectGameNumber3,(0,0))
+                    case 4 :
+                        screen.blit(SelectGameNumber4,(0,0))
+                screen.blit(GameNumbertoMenuButton,GameNumbertoMenuButton_pos1)
+                pygame.display.update()
         #Game
         case 4 :
             while MenuCase4Working :
@@ -219,7 +256,7 @@ while MenuWorking :
                         sys.exit()
                 screen.fill(BackGroundColor)
                 screen.blit(mapImage,mapImage_pos)
-                teamUIBlit()
+                teamUIBlit(GameNumber)
                 pygame.display.update()
         #EndGame
         case 5 :
