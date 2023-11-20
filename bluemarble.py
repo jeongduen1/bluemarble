@@ -39,26 +39,33 @@ def isClickButton(BtnPos1,BtnPos2,ClickPos) :
         return True
     else :
         return False
-
+def blockSet(arr) :
+    x = 0
+    y = 0
+    type = 1
+    arr[x,y].append(Block())
+    arr[x,y].type = type
+    
 def teamUIBlit(num) :
+    pygame.draw.rect(screen,Black,[])
     match num :
         case 2:
-            screen.blit(RedTeamUI,(0,10))
-            screen.blit(BlueTeamUI,(0,220))
+            screen.blit(RedTeamUI,(910,10))
+            screen.blit(BlueTeamUI,(910,220))
             screen.blit(TurnMarker,TurnMarker_RedUIpos)
             screen.blit(TurnMarker,TurnMarker_BlueUIpos)
         case 3:
-            screen.blit(RedTeamUI,(0,10))
-            screen.blit(BlueTeamUI,(0,220))
-            screen.blit(GreenTeamUI,(0,430))
+            screen.blit(RedTeamUI,(910,10))
+            screen.blit(BlueTeamUI,(910,220))
+            screen.blit(GreenTeamUI,(910,430))
             screen.blit(TurnMarker,TurnMarker_RedUIpos)
             screen.blit(TurnMarker,TurnMarker_BlueUIpos)
             screen.blit(TurnMarker,TurnMarker_GreenUIpos)
         case 4:
-            screen.blit(RedTeamUI,(0,10))
-            screen.blit(BlueTeamUI,(0,220))
-            screen.blit(GreenTeamUI,(0,430))
-            screen.blit(YellowTeamUI,(0,640))
+            screen.blit(RedTeamUI,(910,10))
+            screen.blit(BlueTeamUI,(910,220))
+            screen.blit(GreenTeamUI,(910,430))
+            screen.blit(YellowTeamUI,(910,640))
             screen.blit(TurnMarker,TurnMarker_RedUIpos)
             screen.blit(TurnMarker,TurnMarker_BlueUIpos)
             screen.blit(TurnMarker,TurnMarker_GreenUIpos)
@@ -110,7 +117,7 @@ GameNumberCheckButton_Cpos = (521, 243)
 #Map Image
 mapImage = pygame.image.load("images/board/mapimage.png").convert()
 mapImage = pygame.transform.scale(mapImage,(900,900))
-mapImage_pos = (350,0)
+mapImage_pos = (0,0)
 #redteam UI
 RedTeamTurnText = pygame.image.load("images/UI/RedTeamTurnText.png").convert()
 RedTeamTurnText.set_colorkey(White)
@@ -140,6 +147,9 @@ TurnMarker_RedUIpos = (73,15)
 TurnMarker_BlueUIpos = (73,225)
 TurnMarker_GreenUIpos = (73,435)
 TurnMarker_YellowUIpos = (73,645)
+p1 = pygame.image.load("images/players/p1.png").convert()
+p1 = pygame.transform.scale(p1,(75,75))
+p1.set_colorkey(Black)
 #GameLoop
 MenuWorking = True
 Eventype = 1
@@ -250,14 +260,18 @@ while MenuWorking :
                 pygame.display.update()
         #Game
         case 4 :
+            Turn = 1
             while MenuCase4Working :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit()
-                screen.fill(BackGroundColor)
-                screen.blit(mapImage,mapImage_pos)
-                teamUIBlit(GameNumber)
-                pygame.display.update()
+                for i in range(GameNumber) :
+                    screen.fill(BackGroundColor)
+                    screen.blit(mapImage,mapImage_pos)
+                    teamUIBlit(GameNumber)
+                    MyTurnMakerDraw(Turn)
+                    screen.blit(p1,(1150,800))
+                    pygame.display.update()
         #EndGame
         case 5 :
             while MenuCase5Working :
