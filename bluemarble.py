@@ -3,12 +3,13 @@ from pygame.locals import *
 
 #General Setting
 pygame.display.set_caption("BlueMarble")
-width = 1600
-height = 900
+width = 1920
+height = 1080
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 #Colors
 White = (255,255,255)
+WoodBGColor = (235,178,126)
 BackGroundColor = (125,178,73)
 Black = (0,0,0)
 #Classes
@@ -24,9 +25,13 @@ class Block :
     def __init__(self) :
         self.type = 0
         self.price = 0
-        self.pos = [0]
+        self.pos = [0,0]
         self.owned = 0
         self.building = 0
+blocks1 = [] #시작+7
+blocks2 = [] #무인도+7
+blocks3 = [] #올림픽+7
+blocks4 = [] #세계 여행+7
 #Defines
 def SetPlayers(arr,num) :
     for i in range(num) :
@@ -39,105 +44,279 @@ def isClickButton(BtnPos1,BtnPos2,ClickPos) :
         return True
     else :
         return False
-def blockSet(arr) :
-    x = 0
-    y = 0
+def blockSet(arr1,arr2,arr3,arr4) :
+    price = 100000
     type = 1
-    arr[x,y].append(Block())
-    arr[x,y].type = type
-    
-def teamUIBlit(num) :
-    pygame.draw.rect(screen,Black,[])
-    match num :
-        case 2:
-            screen.blit(RedTeamUI,(910,10))
-            screen.blit(BlueTeamUI,(910,220))
-            screen.blit(TurnMarker,TurnMarker_RedUIpos)
-            screen.blit(TurnMarker,TurnMarker_BlueUIpos)
-        case 3:
-            screen.blit(RedTeamUI,(910,10))
-            screen.blit(BlueTeamUI,(910,220))
-            screen.blit(GreenTeamUI,(910,430))
-            screen.blit(TurnMarker,TurnMarker_RedUIpos)
-            screen.blit(TurnMarker,TurnMarker_BlueUIpos)
-            screen.blit(TurnMarker,TurnMarker_GreenUIpos)
-        case 4:
-            screen.blit(RedTeamUI,(910,10))
-            screen.blit(BlueTeamUI,(910,220))
-            screen.blit(GreenTeamUI,(910,430))
-            screen.blit(YellowTeamUI,(910,640))
-            screen.blit(TurnMarker,TurnMarker_RedUIpos)
-            screen.blit(TurnMarker,TurnMarker_BlueUIpos)
-            screen.blit(TurnMarker,TurnMarker_GreenUIpos)
-            screen.blit(TurnMarker,TurnMarker_YellowUIpos)
-
-def MyTurnMakerDraw(num):
-    match num :
+    y = 1
+    PixelPos = [1005,1005]
+    match y :
+        case 1 : 
+            arr1.append(Block())
+            arr1[0].type = type
+            arr1[0].pos = PixelPos
+            PixelPos[0] -= 150
+            PixelPos[1] += 55
+            type += 1
+            for i in range(3) :
+                arr1.append(Block())
+                arr1[i].type = 0
+                arr1[i].price = price
+                arr1[i].pos = PixelPos
+                PixelPos[0] -= 110
+                price += 10000
+            arr1.append(Block())
+            arr1[4].type = 5
+            PixelPos[1] += 55
+            arr1[4].pos = PixelPos
+            PixelPos[0] -= 150
+            PixelPos[1] -= 55
+            for i in range(3) :
+                arr1.append(Block())
+                arr1[i].type = 0
+                arr1[i].price = price
+                arr1[i].pos = PixelPos
+                PixelPos[0] -= 110
+                price += 10000
+        case 2 :
+            arr2.append(Block())
+            arr2[0].type = type
+            type += 1
+            for i in range(3) :
+                arr2.append(Block())
+                arr2[i].type = 0
+                arr2[i].price = price
+                price += 10000
+            arr2.append(Block())
+            arr2[4].type = 5
+            for i in range(3) :
+                arr2.append(Block())
+                arr2[i].type = 0
+                arr2[i].price = price
+                price += 10000
+        case 3 :
+            arr3.append(Block())
+            arr3[0].type = type
+            type += 1
+            for i in range(3) :
+                arr3.append(Block())
+                arr3[i].type = 0
+                arr3[i].price = price
+                price += 10000
+            arr3.append(Block())
+            arr3[4].type = 5
+            for i in range(3) :
+                arr3.append(Block())
+                arr3[i].type = 0
+                arr3[i].price = price
+                price += 10000
+        case 4 :
+            arr4.append(Block())
+            arr4[0].type = type
+            type += 1
+            for i in range(3) :
+                arr4.append(Block())
+                arr4[i].type = 0
+                arr4[i].price = price
+                price += 10000
+            arr4.append(Block())
+            arr4[4].type = 5
+            for i in range(3) :
+                arr4.append(Block())
+                arr4[i].type = 0
+                arr4[i].price = price
+                price += 10000
+def CheckBlockPos(pos) :
+    if pos <= 7 :
+        match pos :
+            case 0 :
+                return blocks1[0].pos
             case 1 :
-                screen.blit(MyTurnMarker,TurnMarker_RedUIpos)
+                return blocks1[1].pos
             case 2 :
-                screen.blit(MyTurnMarker,TurnMarker_BlueUIpos)
+                return blocks1[2].pos
             case 3 :
-                screen.blit(MyTurnMarker,TurnMarker_GreenUIpos)
+                return blocks1[3].pos
             case 4 :
-                screen.blit(MyTurnMarker,TurnMarker_YellowUIpos)
-#Menu,GameRule,GameNumber,Game,EndGame
+                return blocks1[4].pos
+            case 5 :
+                return blocks1[5].pos
+            case 6 :
+                return blocks1[6].pos
+            case 7 :
+                return blocks1[7].pos
+    elif pos <= 15 :
+        match pos :
+            case 8 :
+                return blocks2[0].pos
+            case 9 :
+                return blocks2[1].pos
+            case 10 :
+                return blocks2[2].pos
+            case 11 :
+                return blocks2[3].pos
+            case 12 :
+                return blocks2[4].pos
+            case 13 :
+                return blocks2[5].pos
+            case 14 :
+                return blocks2[6].pos
+            case 15 :
+                return blocks2[7].pos
+    elif pos <= 23 :
+        match pos :
+            case 16 :
+                return blocks3[0].pos
+            case 17 :
+                return blocks3[1].pos
+            case 18 :
+                return blocks3[2].pos
+            case 19 :
+                return blocks3[3].pos
+            case 20 :
+                return blocks3[4].pos
+            case 21 :
+                return blocks3[5].pos
+            case 22 :
+                return blocks3[6].pos
+            case 23 :
+                return blocks3[7].pos
+    else :
+        match pos :
+            case 24 :
+                return blocks4[0].pos
+            case 25 :
+                return blocks4[1].pos
+            case 26 :
+                return blocks4[2].pos
+            case 27 :
+                return blocks4[3].pos
+            case 28 :
+                return blocks4[4].pos
+            case 29 :
+                return blocks4[5].pos
+            case 30 :
+                return blocks4[6].pos
+            case 31 :
+                return blocks4[7].pos
+def CheckBlockType(pos) :
+    if pos <= 7 :
+        match pos :
+            case 0 :
+                return blocks1[0].type
+            case 1 :
+                return blocks1[1].type
+            case 2 :
+                return blocks1[2].type
+            case 3 :
+                return blocks1[3].type
+            case 4 :
+                return blocks1[4].type
+            case 5 :
+                return blocks1[5].type
+            case 6 :
+                return blocks1[6].type
+            case 7 :
+                return blocks1[7].type
+    elif pos <= 15 :
+        match pos :
+            case 8 :
+                return blocks2[0].type
+            case 9 :
+                return blocks2[1].type
+            case 10 :
+                return blocks2[2].type
+            case 11 :
+                return blocks2[3].type
+            case 12 :
+                return blocks2[4].type
+            case 13 :
+                return blocks2[5].type
+            case 14 :
+                return blocks2[6].type
+            case 15 :
+                return blocks2[7].type
+    elif pos <= 23 :
+        match pos :
+            case 16 :
+                return blocks3[0].type
+            case 17 :
+                return blocks3[1].type
+            case 18 :
+                return blocks3[2].type
+            case 19 :
+                return blocks3[3].type
+            case 20 :
+                return blocks3[4].type
+            case 21 :
+                return blocks3[5].type
+            case 22 :
+                return blocks3[6].type
+            case 23 :
+                return blocks3[7].type
+    else :
+        match pos :
+            case 24 :
+                return blocks4[0].type
+            case 25 :
+                return blocks4[1].type
+            case 26 :
+                return blocks4[2].type
+            case 27 :
+                return blocks4[3].type
+            case 28 :
+                return blocks4[4].type
+            case 29 :
+                return blocks4[5].type
+            case 30 :
+                return blocks4[6].type
+            case 31 :
+                return blocks4[7].type
+#Menu,GameRule,GameNumber,Game,EndGame / InGameMenu
+#InGameMenu Images
+InGameMenu = pygame.image.load("images/UI/InGameMenu.png").convert()
+InGameMenuContinueButton_pos1 = (642,354)
+InGameMenuContinueButton_pos2 = (1279,520)
+InGameMenuBackToMenuButton_pos1 = (642,540)
+InGameMenuBackToMenuButton_pos2 = (1279,707)
+InGameMenuExitButton_pos1 = (642,737)
+InGameMenuExitButton_pos2 = (1279,888)
 #Menu Images
 GameMenuBoard = pygame.image.load("images/UI/GameMenu.png").convert()
 GameMenuBoard_pos = (0,0)
-MenuStartButton_pos1 = (562, 289)
-MenuStartButton_pos2 = (1038, 401)
-GameRuleButton_pos1 = (562, 432)
-GameRuleButton_pos2 = (1038, 545)
-MenuExitButton_pos1 = (562,566)
-MenuExitButton_pos2 = (1038,691)
+MenuStartButton_pos1 = (882, 469)
+MenuStartButton_pos2 = (1358, 581)
+GameRuleButton_pos1 = (882, 612)
+GameRuleButton_pos2 = (1358, 725)
+MenuExitButton_pos1 = (882,746)
+MenuExitButton_pos2 = (1358,871)
 #GameRule Images
 RuleNotePage1 = pygame.image.load("images/UI/RuleNotePage1.png").convert()
 RuleNotePage2 = pygame.image.load("images/UI/RuleNotePage2.png").convert()
 RuleNotePage3 = pygame.image.load("images/UI/RuleNotePage3.png").convert()
-NextPageButton_Cpos1 = (1187,770)
-NextPageButton_Cpos2 = (1510, 800)
-BackPageButton_Cpos = (93, 800)
-BacktoMenuButton_Cpos = (1486, 113)
+NextPageButton_Cpos1 = (1507-160,950-90)
+NextPageButton_Cpos2 = (1830-160, 980-90)
+BackPageButton_Cpos = (413-160, 980-90)
+BacktoMenuButton_Cpos = (1640, 202)
 #GameNumber
 GameNumbertoMenuButton = pygame.image.load("images/buttons/GameNumbertoMenuButton.png").convert()
 GameNumbertoMenuButton = pygame.transform.scale(GameNumbertoMenuButton,(75,75))
 GameNumbertoMenuButton.set_colorkey(White)
-GameNumbertoMenuButton_pos1 = (1485,50)
-GameNumbertoMenuButton_pos2 = (1585,150)
+GameNumbertoMenuButton_pos1 = (1485+320,50+180)
+GameNumbertoMenuButton_pos2 = (1585,150+180)
 SelectGameNumber2 = pygame.image.load("images/UI/SelectGameNumber2.png").convert()
 SelectGameNumber3 = pygame.image.load("images/UI/SelectGameNumber3.png").convert()
 SelectGameNumber4 = pygame.image.load("images/UI/SelectGameNumber4.png").convert()
-GameNumberMinusButton_pos1 = (28, 440)
-GameNumberMinusButton_pos2 = (74, 485)
-GameNumberPlusButton_pos1 = (489, 438)
-GameNumberPlusButton_pos2 = (535, 483)
-GameNumberCheckButton_Cpos = (521, 243)
+GameNumberMinusButton_pos1 = (34, 527)
+GameNumberMinusButton_pos2 = (91, 584)
+GameNumberPlusButton_pos1 = (588, 526)
+GameNumberPlusButton_pos2 = (644, 582)
+GameNumberCheckButton_Cpos = (622, 303)
+GNInGameMenuButton_Cpos = (60,120)
 #Game Images
+GInGameMenuButton_Cpos = (1880, 40)
 #Map Image
 mapImage = pygame.image.load("images/board/mapimage.png").convert()
-mapImage = pygame.transform.scale(mapImage,(900,900))
 mapImage_pos = (0,0)
-#redteam UI
-RedTeamTurnText = pygame.image.load("images/UI/RedTeamTurnText.png").convert()
-RedTeamTurnText.set_colorkey(White)
-RedTeamUI = pygame.image.load("images/UI/RedTeamUI.png").convert()
-RedTeamUI = pygame.transform.scale(RedTeamUI,(350,200))
-#blueteam UI
-BlueTeamTurnText = pygame.image.load("images/UI/BlueTeamTurnText.png").convert()
-BlueTeamTurnText.set_colorkey(White)
-BlueTeamUI = pygame.image.load("images/UI/BlueTeamUI.png").convert()
-BlueTeamUI = pygame.transform.scale(BlueTeamUI,(350,200))
-#greenteam UI
-GreenTeamTurnText = pygame.image.load("images/UI/GreenTeamTurnText.png").convert()
-GreenTeamTurnText.set_colorkey(White)
-GreenTeamUI = pygame.image.load("images/UI/GreenTeamUI.png").convert()
-GreenTeamUI = pygame.transform.scale(GreenTeamUI,(350,200))
-#yellowteam UI
-YellowTeamTurnText = pygame.image.load("images/UI/YellowTeamTurnText.png").convert()
-YellowTeamTurnText.set_colorkey(White)
-YellowTeamUI = pygame.image.load("images/UI/YellowTeamUI.png").convert()
-YellowTeamUI = pygame.transform.scale(YellowTeamUI,(350,200))
 #TurnMarker
 TurnMarker = pygame.image.load("images/markers/TurnMarker.png").convert()
 TurnMarker = pygame.transform.scale(TurnMarker,(65,65))
@@ -159,13 +338,13 @@ while MenuWorking :
     MenuCase3Working = True
     MenuCase4Working = True
     MenuCase5Working = True
+    MenuCase6Working = True
+    InGameMenuIsWorking = False
     match Eventype :
         #Menu
         case 1:
             while MenuCase1Working :
                 for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         Click_pos = pygame.mouse.get_pos()
                         print(Click_pos)
@@ -189,8 +368,6 @@ while MenuWorking :
             page = 1
             while MenuCase2Working :
                 for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         Click_pos = pygame.mouse.get_pos()
                         print(Click_pos)
@@ -206,14 +383,15 @@ while MenuWorking :
                                     page -= 1
                                 if distance(BacktoMenuButton_Cpos,Click_pos) <= 30:
                                     Eventype = 1
-                                    MenuCase2Working = False      
+                                    MenuCase2Working = False   
+                screen.fill(WoodBGColor)   
                 match page :
                     case 1:
-                        screen.blit(RuleNotePage1,(0,0))
+                        screen.blit(RuleNotePage1,(160,90))
                     case 2:
-                        screen.blit(RuleNotePage2,(0,0))
+                        screen.blit(RuleNotePage2,(160,90))
                     case 3:
-                        screen.blit(RuleNotePage3,(0,0))
+                        screen.blit(RuleNotePage3,(160,90))
                 pygame.display.update()
         #GameNumber
         case 3:
@@ -225,9 +403,25 @@ while MenuWorking :
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         Click_pos = pygame.mouse.get_pos()
                         print(Click_pos)
-                        if isClickButton(GameNumbertoMenuButton_pos1,GameNumbertoMenuButton_pos2,Click_pos) :
-                                    Eventype = 1
-                                    MenuCase3Working = False
+                        if distance(GNInGameMenuButton_Cpos,Click_pos) <= 40 :
+                            InGameMenuIsWorking = True
+                            while InGameMenuIsWorking :
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        sys.exit()
+                                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                                        Click_pos = pygame.mouse.get_pos()
+                                        print(Click_pos)
+                                        if isClickButton(InGameMenuContinueButton_pos1,InGameMenuContinueButton_pos2,Click_pos) :
+                                            InGameMenuIsWorking = False
+                                        if isClickButton(InGameMenuBackToMenuButton_pos1,InGameMenuBackToMenuButton_pos2,Click_pos) :
+                                            InGameMenuIsWorking = False
+                                            MenuCase3Working = False
+                                            Eventype = 1
+                                        if isClickButton(InGameMenuExitButton_pos1,InGameMenuExitButton_pos2,Click_pos) :
+                                            sys.exit()
+                                screen.blit(InGameMenu,(0,0))
+                                pygame.display.update()
                         match GameNumber :
                             case 2 :
                                 if isClickButton(GameNumberPlusButton_pos1,GameNumberPlusButton_pos2,Click_pos) :
@@ -253,25 +447,45 @@ while MenuWorking :
                     case 2 :
                         screen.blit(SelectGameNumber2,(0,0))
                     case 3 :
-                        screen.blit(SelectGameNumber3,(0,0))
+                        screen.blit(SelectGameNumber3,(0,-1))
                     case 4 :
-                        screen.blit(SelectGameNumber4,(0,0))
+                        screen.blit(SelectGameNumber4,(0,-1))
                 screen.blit(GameNumbertoMenuButton,GameNumbertoMenuButton_pos1)
                 pygame.display.update()
         #Game
         case 4 :
             Turn = 1
+            blockSet(blocks1,blocks2,blocks3,blocks4)
             while MenuCase4Working :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit()
-                for i in range(GameNumber) :
-                    screen.fill(BackGroundColor)
-                    screen.blit(mapImage,mapImage_pos)
-                    teamUIBlit(GameNumber)
-                    MyTurnMakerDraw(Turn)
-                    screen.blit(p1,(1150,800))
-                    pygame.display.update()
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                        Click_pos = pygame.mouse.get_pos()
+                        print(Click_pos)
+                        if distance(GInGameMenuButton_Cpos,Click_pos) <= 40 :
+                            InGameMenuIsWorking = True
+                            while InGameMenuIsWorking :
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        sys.exit()
+                                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                                        Click_pos = pygame.mouse.get_pos()
+                                        print(Click_pos)
+                                        if isClickButton(InGameMenuContinueButton_pos1,InGameMenuContinueButton_pos2,Click_pos) :
+                                            InGameMenuIsWorking = False
+                                        if isClickButton(InGameMenuBackToMenuButton_pos1,InGameMenuBackToMenuButton_pos2,Click_pos) :
+                                            InGameMenuIsWorking = False
+                                            MenuCase4Working = False
+                                            Eventype = 1
+                                        if isClickButton(InGameMenuExitButton_pos1,InGameMenuExitButton_pos2,Click_pos) :
+                                            sys.exit()
+                                screen.blit(InGameMenu,(0,0))
+                                pygame.display.update()
+                screen.fill(BackGroundColor)
+                screen.blit(mapImage,mapImage_pos)
+                screen.blit(p1,(1150,800))
+                pygame.display.update()
         #EndGame
         case 5 :
             while MenuCase5Working :
@@ -280,3 +494,10 @@ while MenuWorking :
                         sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
                         Click_pos = pygame.mouse.get_pos()
+        #InGameMenu
+        case 6 :
+            while MenuCase6Working :
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                
