@@ -450,7 +450,6 @@ while MenuWorking :
                         screen.blit(SelectGameNumber3,(0,-1))
                     case 4 :
                         screen.blit(SelectGameNumber4,(0,-1))
-                screen.blit(GameNumbertoMenuButton,GameNumbertoMenuButton_pos1)
                 pygame.display.update()
         #Game
         case 4 :
