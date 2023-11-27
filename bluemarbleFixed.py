@@ -440,6 +440,8 @@ while isGameLogicRunning :
                 ownedNormalBlockPhase = 0
                 unIsPhase = 0
                 worldTour_pos = []
+                tempPhase = 0
+                chanceCardPhase = 0
                 cards = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
             while isGameRunning :
                 for event in pygame.event.get():
@@ -587,102 +589,106 @@ while isGameLogicRunning :
                                         phase = 7
                                     case 5 : #황금열쇠 블록인 경우
                                         cardTemp = 0
-                                        if 1 <= cards[0] <= 3 : #효과가 건물 유지비 지불인 경우
-                                            building_type1 = 0
-                                            building_type2 = 0
-                                            building_type3 = 0
-                                            for i in range(4) :
-                                                for j in range(5) :
-                                                    if blocks[j][i].owned == turn :
-                                                        for k in range(2) :
-                                                            match blocks[j][i].building[k] :
-                                                                case 1 :
-                                                                    building_type1+=1
-                                                                case 2 :
-                                                                    building_type2+=1
-                                                                case 3 :
-                                                                    building_type3+=1
-                                            match cards[0] :
-                                                case 1 : #1.정기종합소득세
-                                                    players[turn].pay(building_type1*30000 + building_type2*100000 + building_type3*150000)
-                                                case 2 : #2.건물수리비 지불
-                                                    players[turn].pay(building_type1*30000 + building_type2*60000 + building_type3*100000)
-                                                case 3 : #3.방범비
-                                                    players[turn].pay(building_type1*10000 + building_type2*30000 + building_type3*50000)
-                                            cards[0] = cardTemp
-                                            cards[0] = cards[len(cards)]
-                                            cards[len(cards)] = cardTemp
-                                        elif 2 <= cards[0] <= 3 : #효과가 획득인 경우
-                                            match cards[0] :
-                                                case 2 : #4.무인도 탈출권(무전기)
-                                                    players[turn].items.append(4)
-                                                    cards.remove(4)
-                                                case 2 : #5.우대권
-                                                    players[turn].items.append(5)
-                                                    cards.remove(5)
-                                        elif 6 <= cards[0] <= 11 : #효과가 이동인 경우
-                                            match cards[0] :
-                                                case 6 : #6.앞으로 이동
-                                                    dice[0] = random.randint(1,6)
-                                                    dice[1] = random.randint(1,6)
-                                                    beforeYpos = players[turn].pos[1]
-                                                    print('before :',players[turn].pos)
-                                                    players[turn].move(2)
-                                                    afterYpos = players[turn].pos[1]
-                                                    print('after :',players[turn].pos)
-                                                    phase = 5
-                                                case 7 : #7.무인도
-                                                    unIs_pos = (0,1)
-                                                    players[turn].tp(unIs_pos)
-                                                    phase = 7
-                                                case 8 : #8.올림픽 관람 초대권
-                                                    olympic_pos = (0,2)
-                                                    players[turn].tp(olympic_pos)
-                                                    phase = 6
-                                                case 9 : #9.세계여행 초대권
-                                                    olympic_pos = (0,3)
-                                                    players[turn].tp(olympic_pos)
-                                                    phase = 7
-                                                case 10 : #10.세계일주 초대권
-                                                    start_pos = (0,0)
-                                                    players[turn].tp(start_pos)
-                                                    players[turn].getMoney(200000)
-                                                    phase = 7
-                                                case 11 : #11.고속도로
-                                                    players[turn].getMoney(200000)
-                                                    phase = 7
-                                            cards[0] = cardTemp
-                                            cards[0] = cards[len(cards)]
-                                            cards[len(cards)] = cardTemp
-                                        else : #상금 지불 기타
-                                            match cards[0] :
-                                                #상금
-                                                case 12 : #12.노벨평화상 수상
-                                                    players[turn].getMoney(300000)
-                                                case 13 : #13.복권 당첨
-                                                    players[turn].getMoney(200000)
-                                                case 14 : #14.자동차 경주에서의 우승
-                                                    players[turn].getMoney(100000)
-                                                case 15 : #15.장학금 혜택
-                                                    players[turn].getMoney(100000)
-                                                case 16 : #16.연금 혜택
-                                                    players[turn].getMoney(50000)
-                                                #지불
-                                                case 17 : #17.해외유학
-                                                    players[turn].pay(100000)
-                                                case 18 : #18.병원비
-                                                    players[turn].pay(50000)
-                                                case 19 : #19.과속운전 벌금
-                                                    players[turn].pay(50000)
-                                                #기타
-                                                case 20 : #20.생일축하
-                                                    for i in range(gameNumber) :
-                                                        players[i].pay(10000)
-                                                    players[turn].getMoney(gameNumber*10000)
-                                            cards[0] = cardTemp
-                                            cards[0] = cards[len(cards)]
-                                            cards[len(cards)] = cardTemp
-                                        phase = 7
+                                        match chanceCardPhase :
+                                            case 0 :
+                                                if 1 <= cards[0] <= 3 : #효과가 건물 유지비 지불인 경우
+                                                    building_type1 = 0
+                                                    building_type2 = 0
+                                                    building_type3 = 0
+                                                    for i in range(4) :
+                                                        for j in range(5) :
+                                                            if blocks[j][i].owned == turn :
+                                                                for k in range(2) :
+                                                                    match blocks[j][i].building[k] :
+                                                                        case 1 :
+                                                                            building_type1+=1
+                                                                        case 2 :
+                                                                            building_type2+=1
+                                                                        case 3 :
+                                                                            building_type3+=1
+                                                    match cards[0] :
+                                                        case 1 : #1.정기종합소득세
+                                                            players[turn].pay(building_type1*30000 + building_type2*100000 + building_type3*150000)
+                                                        case 2 : #2.건물수리비 지불
+                                                            players[turn].pay(building_type1*30000 + building_type2*60000 + building_type3*100000)
+                                                        case 3 : #3.방범비
+                                                            players[turn].pay(building_type1*10000 + building_type2*30000 + building_type3*50000)
+                                                    cards[0] = cardTemp
+                                                    cards[0] = cards[len(cards)]
+                                                    cards[len(cards)] = cardTemp
+                                                    tempPhase = 7
+                                                elif 2 <= cards[0] <= 3 : #효과가 획득인 경우
+                                                    match cards[0] :
+                                                        case 2 : #4.무인도 탈출권(무전기)
+                                                            players[turn].items.append(4)
+                                                            cards.remove(4)
+                                                        case 2 : #5.우대권
+                                                            players[turn].items.append(5)
+                                                            cards.remove(5)
+                                                    tempPhase = 7
+                                                elif 6 <= cards[0] <= 11 : #효과가 이동인 경우
+                                                    match cards[0] :
+                                                        case 6 : #6.앞으로 이동
+                                                            dice[0] = random.randint(1,6)
+                                                            dice[1] = random.randint(1,6)
+                                                            beforeYpos = players[turn].pos[1]
+                                                            print('before :',players[turn].pos)
+                                                            players[turn].move(2)
+                                                            afterYpos = players[turn].pos[1]
+                                                            print('after :',players[turn].pos)
+                                                            tempPhase = 5
+                                                        case 7 : #7.무인도
+                                                            unIs_pos = (0,1)
+                                                            players[turn].tp(unIs_pos)
+                                                            tempPhase = 7
+                                                        case 8 : #8.올림픽 관람 초대권
+                                                            olympic_pos = (0,2)
+                                                            players[turn].tp(olympic_pos)
+                                                            tempPhase = 6
+                                                        case 9 : #9.세계여행 초대권
+                                                            olympic_pos = (0,3)
+                                                            players[turn].tp(olympic_pos)
+                                                            tempPhase = 7
+                                                        case 10 : #10.세계일주 초대권
+                                                            start_pos = (0,0)
+                                                            players[turn].tp(start_pos)
+                                                            players[turn].getMoney(200000)
+                                                            tempPhase = 7
+                                                        case 11 : #11.고속도로
+                                                            players[turn].getMoney(200000)
+                                                            tempPhase = 7
+                                                    cards[0] = cardTemp
+                                                    cards[0] = cards[len(cards)]
+                                                    cards[len(cards)] = cardTemp
+                                                else : #상금 지불 기타
+                                                    match cards[0] :
+                                                        #상금
+                                                        case 12 : #12.노벨평화상 수상
+                                                            players[turn].getMoney(300000)
+                                                        case 13 : #13.복권 당첨
+                                                            players[turn].getMoney(200000)
+                                                        case 14 : #14.자동차 경주에서의 우승
+                                                            players[turn].getMoney(100000)
+                                                        case 15 : #15.장학금 혜택
+                                                            players[turn].getMoney(100000)
+                                                        case 16 : #16.연금 혜택
+                                                            players[turn].getMoney(50000)
+                                                        #지불
+                                                        case 17 : #17.해외유학
+                                                            players[turn].pay(100000)
+                                                        case 18 : #18.병원비
+                                                            players[turn].pay(50000)
+                                                        case 19 : #19.과속운전 벌금
+                                                            players[turn].pay(50000)
+                                                        #기타
+                                                        case 20 : #20.생일축하
+                                                            for i in range(gameNumber) :
+                                                                players[i].pay(10000)
+                                                            players[turn].getMoney(gameNumber*10000)
+                                                    cards[0] = cardTemp
+                                                    cards[0] = cards[len(cards)]
+                                                    cards[len(cards)] = cardTemp
+                                                    tempPhase = 7
                             case 7 :
                                 gameTurn+=1
                                 for i in range(gameNumber) :
@@ -700,22 +706,209 @@ while isGameLogicRunning :
                                         turn = 0
                                     phase = 0
                 match phase :
-                    case 1 :
-                        screen.blit(diceButton,diceButton_pos)
-                    case 2 :
+                    case 2 : #무인도인 경우
+                        match unIsPhase :
+                            case 0 : #아이템 유무 확인
+                                if len(players[turn].item) != 0 :
+                                    unIsPhase = 1 #o
+                                else :
+                                    unIsPhase = 3 #x
+                            case 1 : #무전기 유무 확인
+                                for i in range(players[turn].item) :
+                                    if i == 4 :
+                                        unIsPhase = 2 #o
+                                    else :
+                                        unIsPhase = 3 #x
+                            case 2 : #무전기 사용 여부 확인
+                                screen.blit(card4I,gamePhaseMenu_pos)
+                            case 3 : #무전기를 사용하지 않은 경우의 이동
+                                screen.blit(diceButton,diceButton_pos)
+                                if dice[0] == dice[1] or players[turn].inUnIsTurn > 3 :
+                                    beforeYpos = players[turn].pos[1]
+                                    print('before :',players[turn].pos)
+                                    players[turn].move(dice[0]+dice[1])
+                                    afterYpos = players[turn].pos[1]
+                                    print('after :',players[turn].pos)
+                                    phase = 6
+                                else :
+                                    phase = 7
+                    case 3 : #세계 여행인 경우
+                        beforeYpos = players[turn].pos[1]
+                        print('before :',players[turn].pos)
+                        worldTour_pos =[0,0] #수정 세계 여행 위치 선택
+                        players[turn].tp(worldTour_pos)
+                        afterYpos = players[turn].pos[1]
+                        print('after :',players[turn].pos)
+                        phase = 6
+                    case 4 : #무인도,세계 여행이 아닌 다른 블록인 경우의 이동
+                        if distance(diceButton_Cpos,click_pos) <= 80:
+                            dice[0] = random.randint(1,6)
+                            dice[1] = random.randint(1,6)
+                            beforeYpos = players[turn].pos[1]
+                            print('before :',players[turn].pos)
+                            players[turn].move(dice[0]+dice[1])
+                            afterYpos = players[turn].pos[1]
+                            print('after :',players[turn].pos)
+                            if dice[0] == dice[1] :
+                                double = True
+                            phase = 5
+                    case 5 : #출발지를 지났을 경우
+                        if beforeYpos != 0 and beforeYpos == 0 :
+                            players[turn].getMoney(200000)
+                            players[turn].lap+=1
+                        phase = 6
+                    case 6 :
+                        x = players[turn].pos[0]
+                        y = players[turn].pos[1]
+                        current_block_type = blocks[x][y].type
                         match current_block_type :
-                            case 0 :
-                                screen.blit(normalMenu,gamePhaseMenu_pos)
-                            case 1:
-                                print('')
-                            case 2 :
-                                screen.blit(uninhabitedIslandMenu,gamePhaseMenu_pos)
-                            case 3 :
-                                screen.blit(olympicMenu,gamePhaseMenu_pos)
-                            case 4 :
-                                screen.blit(worldTourMenu,gamePhaseMenu_pos)
-                            case 5 :
-                                screen.blit(chanceCardMenu,gamePhaseMenu_pos)
+                            case 0 : #일반 블록인 경우
+                                match normalBlockPhase :
+                                    case 0 : #소유자가 없을 경우
+                                        if blocks[x][y].owned == 5 :
+                                            if distance(phaseMenuYesButton_Cpos,click_pos) <= 65 :
+                                                blocks[x][y].buy(turn)
+                                                players[turn].pay(blocks[x][y].price)
+                                            if distance(phaseMenuNoButton_Cpos,click_pos) <= 65 :
+                                                phase = 7
+                                        else : #소유자가 있는 경우
+                                            if blocks[x][y].owned == turn : #소유자가 자신인 경우
+                                                print('자신의 블록') #수정 자신의 블록인 경우 건물 건축
+                                                phase = 7
+                                            else : #소유자가 상대방인 경우
+                                                match ownedNormalBlockPhase :
+                                                    case 0 : #아이템 유무 확인
+                                                        if len(players[turn].item) != 0 :
+                                                            ownedNormalBlockPhase = 1 #o
+                                                        else :
+                                                            ownedNormalBlockPhase = 3 #x
+                                                    case 1 : #우대권 유무 확인
+                                                        for i in range(players[turn].item) :
+                                                            if i == 5 :
+                                                                ownedNormalBlockPhase = 2 #o
+                                                            else :
+                                                                ownedNormalBlockPhase = 3 #x
+                                                    case 2 : #우대권 사용 여부 확인
+                                                        if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                                            players[turn].items.remove(5)
+                                                            cards.append(5)
+                                                            phase = 7 #사용o
+                                                        if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                                            ownedNormalBlockPhase = 3 #사용x
+                                                    case 3 : #우대권를 사용하지 않은 경우
+                                                        players[turn].pay(blocks[x][y].tall)
+                                                        players[blocks[x][y].owned].getMoney(blocks[x][y].tall)
+                            case 1 : #시작 블록인 경우
+                                phase = 7
+                            case 2 : #무인도인 경우
+                                phase = 7
+                            case 3 : #올림픽인 경우
+                                for i in range(4) :
+                                    for j in range(8) :
+                                        if blocks[j][i].owned == turn : #소유한 블록이 있는 경우
+                                            print('올림픽 사용')#수정 올림픽 버프 블록 선택
+                                        else : #소유한 블록이 없는 경우
+                                            phase = 7
+                            case 4 : #세계 여행인 경우
+                                phase = 7
+                            case 5 : #황금열쇠 블록인 경우
+                                cardTemp = 0
+                                if 1 <= cards[0] <= 3 : #효과가 건물 유지비 지불인 경우
+                                    building_type1 = 0
+                                    building_type2 = 0
+                                    building_type3 = 0
+                                    for i in range(4) :
+                                        for j in range(5) :
+                                            if blocks[j][i].owned == turn :
+                                                for k in range(2) :
+                                                    match blocks[j][i].building[k] :
+                                                        case 1 :
+                                                            building_type1+=1
+                                                        case 2 :
+                                                            building_type2+=1
+                                                        case 3 :
+                                                            building_type3+=1
+                                    match cards[0] :
+                                        case 1 : #1.정기종합소득세
+                                            players[turn].pay(building_type1*30000 + building_type2*100000 + building_type3*150000)
+                                        case 2 : #2.건물수리비 지불
+                                            players[turn].pay(building_type1*30000 + building_type2*60000 + building_type3*100000)
+                                        case 3 : #3.방범비
+                                            players[turn].pay(building_type1*10000 + building_type2*30000 + building_type3*50000)
+                                    cards[0] = cardTemp
+                                    cards[0] = cards[len(cards)]
+                                    cards[len(cards)] = cardTemp
+                                elif 2 <= cards[0] <= 3 : #효과가 획득인 경우
+                                    match cards[0] :
+                                        case 2 : #4.무인도 탈출권(무전기)
+                                            players[turn].items.append(4)
+                                            cards.remove(4)
+                                        case 2 : #5.우대권
+                                            players[turn].items.append(5)
+                                            cards.remove(5)
+                                elif 6 <= cards[0] <= 11 : #효과가 이동인 경우
+                                    match cards[0] :
+                                        case 6 : #6.앞으로 이동
+                                            dice[0] = random.randint(1,6)
+                                            dice[1] = random.randint(1,6)
+                                            beforeYpos = players[turn].pos[1]
+                                            print('before :',players[turn].pos)
+                                            players[turn].move(2)
+                                            afterYpos = players[turn].pos[1]
+                                            print('after :',players[turn].pos)
+                                            phase = 5
+                                        case 7 : #7.무인도
+                                            unIs_pos = (0,1)
+                                            players[turn].tp(unIs_pos)
+                                            phase = 7
+                                        case 8 : #8.올림픽 관람 초대권
+                                            olympic_pos = (0,2)
+                                            players[turn].tp(olympic_pos)
+                                            phase = 6
+                                        case 9 : #9.세계여행 초대권
+                                            olympic_pos = (0,3)
+                                            players[turn].tp(olympic_pos)
+                                            phase = 7
+                                        case 10 : #10.세계일주 초대권
+                                            start_pos = (0,0)
+                                            players[turn].tp(start_pos)
+                                            players[turn].getMoney(200000)
+                                            phase = 7
+                                        case 11 : #11.고속도로
+                                            players[turn].getMoney(200000)
+                                            phase = 7
+                                    cards[0] = cardTemp
+                                    cards[0] = cards[len(cards)]
+                                    cards[len(cards)] = cardTemp
+                                else : #상금 지불 기타
+                                    match cards[0] :
+                                        #상금
+                                        case 12 : #12.노벨평화상 수상
+                                            players[turn].getMoney(300000)
+                                        case 13 : #13.복권 당첨
+                                            players[turn].getMoney(200000)
+                                        case 14 : #14.자동차 경주에서의 우승
+                                            players[turn].getMoney(100000)
+                                        case 15 : #15.장학금 혜택
+                                            players[turn].getMoney(100000)
+                                        case 16 : #16.연금 혜택
+                                            players[turn].getMoney(50000)
+                                        #지불
+                                        case 17 : #17.해외유학
+                                            players[turn].pay(100000)
+                                        case 18 : #18.병원비
+                                            players[turn].pay(50000)
+                                        case 19 : #19.과속운전 벌금
+                                            players[turn].pay(50000)
+                                        #기타
+                                        case 20 : #20.생일축하
+                                            for i in range(gameNumber) :
+                                                players[i].pay(10000)
+                                            players[turn].getMoney(gameNumber*10000)
+                                    cards[0] = cardTemp
+                                    cards[0] = cards[len(cards)]
+                                    cards[len(cards)] = cardTemp
+                                phase = 7
         case 5 :
             while isEndRunning :
                 for event in pygame.event.get():
