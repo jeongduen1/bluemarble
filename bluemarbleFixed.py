@@ -96,6 +96,27 @@ uninhabitedIslandMenu = pygame.image.load("images/4.GameImages/UI/muindoblockmen
 olympicMenu = pygame.image.load("images/4.GameImages/UI/olympicblockphase.png").convert()
 worldTourMenu = pygame.image.load("images/4.GameImages/UI/worldtourblockmenu.png").convert()
 chanceCardMenu = pygame.image.load("images/4.GameImages/UI/chancecardblockmenu.png").convert()
+#cards Images
+card1I = pygame.image.load("images/4.GameImages/cards/card1.png")
+card2I = pygame.image.load("images/4.GameImages/cards/card2.png")
+card3I = pygame.image.load("images/4.GameImages/cards/card3.png")
+card4I = pygame.image.load("images/4.GameImages/cards/card4.png")
+card5I = pygame.image.load("images/4.GameImages/cards/card5.png")
+card6I = pygame.image.load("images/4.GameImages/cards/card6.png")
+card7I = pygame.image.load("images/4.GameImages/cards/card7.png")
+card8I = pygame.image.load("images/4.GameImages/cards/card8.png")
+card9I = pygame.image.load("images/4.GameImages/cards/card9.png")
+card10I = pygame.image.load("images/4.GameImages/cards/card10.png")
+card11I = pygame.image.load("images/4.GameImages/cards/card11.png")
+card12I = pygame.image.load("images/4.GameImages/cards/card12.png")
+card13I = pygame.image.load("images/4.GameImages/cards/card13.png")
+card14I = pygame.image.load("images/4.GameImages/cards/card14.png")
+card15I = pygame.image.load("images/4.GameImages/cards/card15.png")
+card16I = pygame.image.load("images/4.GameImages/cards/card16.png")
+card17I = pygame.image.load("images/4.GameImages/cards/card17.png")
+card18I = pygame.image.load("images/4.GameImages/cards/card18.png")
+card19I = pygame.image.load("images/4.GameImages/cards/card19.png")
+card20I = pygame.image.load("images/4.GameImages/cards/card20.png")
 #positons
 gameInGameMenuButton_Cpos = (1880, 40)
 #Map
@@ -432,6 +453,9 @@ while isGameLogicRunning :
                             mevent_type = 4
                             isGameRunning = False
                             isInGameMenuRunning = True
+                        screen.blit(mapBoard,mapBoard_pos)
+                        drawGameUI(gameNumber)
+                        drawTurnMarker(turn)
                         match phase :
                             case 0 : #파산 여부 확인
                                 for i in range(gameNumber) :
@@ -562,6 +586,7 @@ while isGameLogicRunning :
                                     case 4 : #세계 여행인 경우
                                         phase = 7
                                     case 5 : #황금열쇠 블록인 경우
+                                        cardTemp = 0
                                         if 1 <= cards[0] <= 3 : #효과가 건물 유지비 지불인 경우
                                             building_type1 = 0
                                             building_type2 = 0
@@ -584,12 +609,17 @@ while isGameLogicRunning :
                                                     players[turn].pay(building_type1*30000 + building_type2*60000 + building_type3*100000)
                                                 case 3 : #3.방범비
                                                     players[turn].pay(building_type1*10000 + building_type2*30000 + building_type3*50000)
+                                            cards[0] = cardTemp
+                                            cards[0] = cards[len(cards)]
+                                            cards[len(cards)] = cardTemp
                                         elif 2 <= cards[0] <= 3 : #효과가 획득인 경우
                                             match cards[0] :
                                                 case 2 : #4.무인도 탈출권(무전기)
                                                     players[turn].items.append(4)
+                                                    cards.remove(4)
                                                 case 2 : #5.우대권
-                                                    players[turn].items.append(4)
+                                                    players[turn].items.append(5)
+                                                    cards.remove(5)
                                         elif 6 <= cards[0] <= 11 : #효과가 이동인 경우
                                             match cards[0] :
                                                 case 6 : #6.앞으로 이동
@@ -621,6 +651,9 @@ while isGameLogicRunning :
                                                 case 11 : #11.고속도로
                                                     players[turn].getMoney(200000)
                                                     phase = 7
+                                            cards[0] = cardTemp
+                                            cards[0] = cards[len(cards)]
+                                            cards[len(cards)] = cardTemp
                                         else : #상금 지불 기타
                                             match cards[0] :
                                                 #상금
@@ -646,6 +679,10 @@ while isGameLogicRunning :
                                                     for i in range(gameNumber) :
                                                         players[i].pay(10000)
                                                     players[turn].getMoney(gameNumber*10000)
+                                            cards[0] = cardTemp
+                                            cards[0] = cards[len(cards)]
+                                            cards[len(cards)] = cardTemp
+                                        phase = 7
                             case 7 :
                                 gameTurn+=1
                                 for i in range(gameNumber) :
@@ -662,10 +699,6 @@ while isGameLogicRunning :
                                     if turn >= gameNumber :
                                         turn = 0
                                     phase = 0
-                screen.blit(mapBoard,mapBoard_pos)
-                drawGameUI(gameNumber)
-                drawTurnMarker(turn)
-
                 match phase :
                     case 1 :
                         screen.blit(diceButton,diceButton_pos)
