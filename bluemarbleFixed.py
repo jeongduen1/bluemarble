@@ -443,10 +443,13 @@ while isGameLogicRunning :
         #Game
         case 4 :
             if fromInGameMenu :
+                sx = 0
+                sy = 0
                 phase = 0
                 turn = 0
                 gameTurn = 0
                 dice = [0,0]
+                add_pos = 0
                 double = False
                 players = []
                 players.clear()
@@ -506,16 +509,20 @@ while isGameLogicRunning :
                                 if distance(diceButton_Cpos,click_pos) <= 80:
                                     dice[0] = random.randint(1,6)
                                     dice[1] = random.randint(1,6)
-                                    before_pos = players[turn].pos
-                                    print('before :',players[turn].pos)
-                                    phase = goPhase
+                                    if dice[0] == dice[1] :
+                                        add_pos = dice[0] + dice[1]
+                                    else :
+                                        before_pos = players[turn].pos
+                                        print('before :',players[turn].pos)
+                                        phase = goPhase
                             case 4 : #이동후 위치 블록의 종류 확인
                                 x = players[turn].pos[0]
                                 y = players[turn].pos[1]
                                 current_block_type = blocks[x][y].type
+                                if
                                 match current_block_type :
                                     case 0 : #일반 블록
-                                        players[turn].move(dice[0]+dice[1])
+                                        players[turn].move(add_pos + dice[0]+dice[1])
                                         after_pos = players[turn].pos
                                         print('after :',players[turn].pos)
                                         phase = 5 #주사위 굴리기
@@ -537,21 +544,64 @@ while isGameLogicRunning :
                                 if passStart(before_pos,after_pos) :
                                     players[turn].getMoney(200000)
                                 if blocks[x][y].owned == 5 : #소유하지 않은 블록
-                                    if distance(phaseMenuYesButton_Cpos,click_pos) :
-                                        players[turn].pay(blocks[x][y].price)
-                                        blocks[x][y].owned = turn
-                                    if distance(phaseMenuNoButton_Cpos,click_pos) :
-                                        phase = 8 #승로 조건 확인
-                                else : #소유한 블록
-                                    if blocks[x][y].owned == turn :
+                                    if players[turn].fortune <= blocks[x][y].price :
+                                        phase = 8
+                                    else :
                                         if distance(phaseMenuYesButton_Cpos,click_pos) :
-                                            #건물선택
-                                            if distance() :
-                                                players[turn].pay(blocks[x][y].bd1Price)
-                                                if len(blocks[x][y]) > 2 :
-                                                    #구매할 수 없음
+                                            players[turn].pay(blocks[x][y].price)
+                                            blocks[x][y].owned = turn
+                                        if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                            phase = 8 #승로 조건 확인
+                                else : #소유한 블록
+                                    if blocks[x][y].owned == turn : #자신이 소유한 블록인 경우
+                                        if len(blocks[x][y]) > 2 or players[turn].fortune <= blocks[x][y].bd1Price or blocks[x][y].visit <= 1 :
+                                            phase = 8
+                                        else :
+                                            match building_type :
+                                                #건물 선택(돈이 부족한 건물은 건물 버튼 제거)
+                                                case 1 :
+                                                    if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                                        players[turn].pay(blocks[x][y].bd1Price)
+                                                        blocks[x][y].building.append(1)
+                                                    if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                                        phase = 8
+                                                case 2 :
+                                                    if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                                        players[turn].pay(blocks[x][y].bd1Price)
+                                                        blocks[x][y].building.append(1)
+                                                    if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                                        phase = 8
+                                                case 3 :
+                                                    if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                                        players[turn].pay(blocks[x][y].bd1Price)
+                                                        blocks[x][y].building.append(1)
+                                                    if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                                        phase = 8
+                                    else : #자신이 소유하지 않은 블록인 경우
+                                        match normalBlockPhase :
+                                            case 0 : #아이템 유무 확인
+                                                if len(players[turn].item) != 0 :
+                                                    ownedNormalBlockPhase = 1 #o
                                                 else :
-                                                    
+                                                    ownedNormalBlockPhase = 3 #x
+                                            case 1 : #우대권 유무 확인
+                                                for i in range(players[turn].item) :
+                                                    if i == 5 :
+                                                        ownedNormalBlockPhase = 2 #o
+                                                    else :
+                                                        ownedNormalBlockPhase = 3 #x
+                                            case 2 : #우대권 사용 여부 확인
+                                                if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                                    players[turn].items.remove(5)
+                                                    cards.append(5)
+                                                    phase = 7 #사용o
+                                                if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                                    ownedNormalBlockPhase = 3 #사용x
+                                            case 3 : #우대권를 사용하지 않은 경우
+                                                players[turn].pay(blocks[x][y].tall)
+                                                players[blocks[x][y].owned].getMoney(blocks[x][y].tall)
+                            case 6 :
+
                             case 3 : #세계 여행인 경우
                                 beforeYpos = players[turn].pos[1]
                                 print('before :',players[turn].pos)
