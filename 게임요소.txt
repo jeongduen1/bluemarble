@@ -20,20 +20,53 @@
 60턴            90턴               120턴
 (인당 턴 수 인원수 / 총 턴수)
 [게임]
-1.파산한 플레이어면 턴 넘기기
-2.현재 위치 블록 종류 파악하기
-2-0.일반블록인 경우 주사위 굴리기 goPhase = 4
-2-1.시작블록인 경우 주사위 굴리기
-2-2.무인도인 경우 주사위 굴리기
-2-3.올림픽인 경우 블록 선택
-2-4.세계여행인 경우 블록 선택
-2-5.황금열쇠인 경우 효과 실행
-3.주사위 굴리고 플레이어 이동 이후 goPhase로 이동
-4.소유한 블록인지 아닌지 확인
-4-1.소유한 블록이 상대의 소유인지 자신의 소유인지 확인
-4-1-1.소유한 블록이 상대의 소유라면 우대권 유무확인
-4-1-1-1.우대권이 있다면 사용여부 확인
-4-1-1-1-1.사용한다면 phase
+match phase :
+case 1 : check failed players
+    if failed : turn++
+    else : phase = 2
+case 2 : check now_pos block type
+    match now_pos's block type :
+    case 0 :
+        roll dice
+    case 1 :
+        roll dice
+    case 2 :
+        unIs
+    case 3 :
+        select block
+    case 4 :
+        roll dice
+    case 5 :
+        effect run
+case 3 : roll dice
+    get now_pos
+    roll dice
+    player move
+    get after_pos
+    if passedStartBlock
+        giveMoney 20,000
+case 4 : unIs
+    if haveRadio and isUse :
+        if isUse :
+            phase = 7
+        else :
+            pay tall
+    else :
+        pay tall
+case 5 : select block
+    select block
+case 6 : chancecard
+    get now_pos
+    effect run
+    get after_pos
+    if passedStartBlock
+        giveMoney 20,000
+case 7 : check
+check winCondition
+check failed players
+turn++
+if turn >= gameNumber
+turn == 0
 [엔딩]
 1등은따로표시
 2~4등표시
