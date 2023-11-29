@@ -1,5 +1,6 @@
 import pygame, sys, random, math
 from pygame.locals import *
+
 ###GeneralSetting###
 pygame.display.set_caption("BlueMarble")
 width = 1920
@@ -9,6 +10,8 @@ clock = pygame.time.Clock()
 pygame.init()
 ###GeneralSetting###
 
+
+
 #######Colors#######
 white = (255,255,255)
 woodBGColor = (235,178,126)
@@ -17,16 +20,23 @@ black = (0,0,0)
 darkGray = (89,89,89)
 #######Colors#######
 
+
+
 #######Images#######
+
 ######GameMenu######
-#images
-gameMenuBoard = pygame.image.load("images/1.GameMenuImages/GameMenu.png").convert()
-#positions
-gameMenuBoard_pos = (0,0)
+##images##
+#gameMenu
+gameMenu = pygame.image.load("images/1.GameMenuImages/GameMenu.png").convert()
+#positions#
+gameMenu_pos = (0,0)
+#startButton pos
 menuStartButton_pos1 = (882, 469)
 menuStartButton_pos2 = (1358, 581)
+#gameRuelButton pos
 gameRuleButton_pos1 = (882, 612)
 gameRuleButton_pos2 = (1358, 725)
+#gameExitButton pos
 menuExitButton_pos1 = (882,746)
 menuExitButton_pos2 = (1358,871)
 ######GameRule######
@@ -91,6 +101,7 @@ dice6 = pygame.transform.scale(dice6,(150,150))
 dice6.set_colorkey(darkGray)
 #PhaseMenu
 normalMenu = pygame.image.load("images/4.GameImages/UI/BuyPhase.png").convert()
+buildYN = pygame.image.load("images/4.gGameImages/UI/buildbuildingYN.png").convert()
 startMenu = pygame.image.load("images/4.GameImages/UI/startblockPhase.png").convert()
 uninhabitedIslandMenu = pygame.image.load("images/4.GameImages/UI/muindoblockmenu.png").convert()
 olympicMenu = pygame.image.load("images/4.GameImages/UI/olympicblockphase.png").convert()
@@ -257,6 +268,11 @@ def isDouble(array) :
         return True
     else :
         return False
+def passStart(pos1,pos2) :
+    if pos1[1] != 0 and pos2[1] == 0 :
+        return True
+    else :
+        return False
 def setPlayers(arr,num) :
     for i in range(num) :
         arr.append(Player())
@@ -350,7 +366,7 @@ while isGameLogicRunning :
                         #GameExitButton
                         if clickButton(menuExitButton_pos1,menuExitButton_pos2,click_pos):
                             sys.exit() #-> GameExit
-                screen.blit(gameMenuBoard,gameMenuBoard_pos)
+                screen.blit(gameMenu,gameMenu_pos)
                 pygame.display.update()
         #GameRule
         case 2 :
@@ -459,55 +475,83 @@ while isGameLogicRunning :
                         drawGameUI(gameNumber)
                         drawTurnMarker(turn)
                         match phase :
-                            case 0 : #파산 여부 확인
+                            case 1 : #파산 여부 확인
                                 for i in range(gameNumber) :
                                     if turn == failedPlayers[i] :
                                         turn+=1
                                     else :
-                                        phase = 1
-                            case 1 : #주사위 사용 이전 시전 효과 블록 종류 확인
+                                        phase = 2
+                            case 2 : #이동 이전 현위치 블록의 종류 확인
                                 x = players[turn].pos[0]
                                 y = players[turn].pos[1]
                                 current_block_type = blocks[x][y].type
-                                if current_block_type == 1 :
-                                    phase = 2 #무인도인 경우
-                                elif current_block_type == 2 :
-                                    phase = 3 #세계 여행인 경우
-                                else :
-                                    phase = 4 #다른 블록인 경우
-                            case 2 : #무인도인 경우
-                                match unIsPhase :
-                                    case 0 : #아이템 유무 확인
-                                        if len(players[turn].item) != 0 :
-                                            unIsPhase = 1 #o
-                                        else :
-                                            unIsPhase = 3 #x
-                                    case 1 : #무전기 유무 확인
-                                        for i in range(players[turn].item) :
-                                            if i == 4 :
-                                                unIsPhase = 2 #o
-                                            else :
-                                                unIsPhase = 3 #x
-                                    case 2 : #무전기 사용 여부 확인
+                                match current_block_type :
+                                    case 0 : #일반 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 4 #진행
+                                    case 1 : #시작 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 4 #진행
+                                    case 2 : #무인도 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 5 #무인도 탈출 조건 확인
+                                    case 3 : #올림픽 블록
+                                        phase = 6 #블록 선택
+                                    case 4 : #세계 여행 블록
+                                        phase = 6 #블록 선택
+                                    case 5 : #찬스카드 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 4 #진행
+                            case 3 : #주사위 굴리기
+                                if distance(diceButton_Cpos,click_pos) <= 80:
+                                    dice[0] = random.randint(1,6)
+                                    dice[1] = random.randint(1,6)
+                                    before_pos = players[turn].pos
+                                    print('before :',players[turn].pos)
+                                    phase = goPhase
+                            case 4 : #이동후 위치 블록의 종류 확인
+                                x = players[turn].pos[0]
+                                y = players[turn].pos[1]
+                                current_block_type = blocks[x][y].type
+                                match current_block_type :
+                                    case 0 : #일반 블록
+                                        players[turn].move(dice[0]+dice[1])
+                                        after_pos = players[turn].pos
+                                        print('after :',players[turn].pos)
+                                        phase = 5 #주사위 굴리기
+                                        goPhase = 4 #진행
+                                    case 1 : #시작 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 4 #진행
+                                    case 2 : #무인도 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 5 #무인도 탈출 조건 확인
+                                    case 3 : #올림픽 블록
+                                        phase = 6 #블록 선택
+                                    case 4 : #세계 여행 블록
+                                        phase = 6 #블록 선택
+                                    case 5 : #찬스카드 블록
+                                        phase = 3 #주사위 굴리기
+                                        goPhase = 4 #진행
+                            case 5 : #일반 블록
+                                if passStart(before_pos,after_pos) :
+                                    players[turn].getMoney(200000)
+                                if blocks[x][y].owned == 5 : #소유하지 않은 블록
+                                    if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                        players[turn].pay(blocks[x][y].price)
+                                        blocks[x][y].owned = turn
+                                    if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                        phase = 8 #승로 조건 확인
+                                else : #소유한 블록
+                                    if blocks[x][y].owned == turn :
                                         if distance(phaseMenuYesButton_Cpos,click_pos) :
-                                            players[turn].items.remove(4)
-                                            cards.append(4)
-                                            phase = 4 #사용o
-                                        if distance(phaseMenuNoButton_Cpos,click_pos) :
-                                            unIsPhase = 3 #사용x
-                                    case 3 : #무전기를 사용하지 않은 경우의 이동
-                                        if distance(diceButton_Cpos,click_pos) <= 80:
-                                            dice[0] = random.randint(1,6)
-                                            dice[1] = random.randint(1,6)
-                                            if dice[0] == dice[1] or players[turn].inUnIsTurn > 3 :
-                                                beforeYpos = players[turn].pos[1]
-                                                print('before :',players[turn].pos)
-                                                players[turn].move(dice[0]+dice[1])
-                                                afterYpos = players[turn].pos[1]
-                                                print('after :',players[turn].pos)
-                                                phase = 6
-                                            else :
-                                                phase = 7
+                                            #건물선택
+                                            if distance() :
+                                                players[turn].pay(blocks[x][y].bd1Price)
+                                                if len(blocks[x][y]) > 2 :
+                                                    #구매할 수 없음
+                                                else :
+                                                    
                             case 3 : #세계 여행인 경우
                                 beforeYpos = players[turn].pos[1]
                                 print('before :',players[turn].pos)
