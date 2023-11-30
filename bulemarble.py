@@ -101,6 +101,7 @@ dice6 = pygame.transform.scale(dice6,(150,150))
 dice6.set_colorkey(darkGray)
 #PhaseMenu
 normalMenu = pygame.image.load("images/4.GameImages/UI/BuyPhase.png").convert()
+buildYN = pygame.image.load("images/4.gGameImages/UI/buildbuildingYN.png").convert()
 startMenu = pygame.image.load("images/4.GameImages/UI/startblockPhase.png").convert()
 uninhabitedIslandMenu = pygame.image.load("images/4.GameImages/UI/muindoblockmenu.png").convert()
 olympicMenu = pygame.image.load("images/4.GameImages/UI/olympicblockphase.png").convert()
@@ -111,7 +112,9 @@ card1I = pygame.image.load("images/4.GameImages/cards/card1.png")
 card2I = pygame.image.load("images/4.GameImages/cards/card2.png")
 card3I = pygame.image.load("images/4.GameImages/cards/card3.png")
 card4I = pygame.image.load("images/4.GameImages/cards/card4.png")
+card4YorNI = pygame.image.load("images/4.GameImages/cards/card4YorN.png")
 card5I = pygame.image.load("images/4.GameImages/cards/card5.png")
+card5YorNI = pygame.image.load("images/4.GameImages/cards/card5YorN.png")
 card6I = pygame.image.load("images/4.GameImages/cards/card6.png")
 card7I = pygame.image.load("images/4.GameImages/cards/card7.png")
 card8I = pygame.image.load("images/4.GameImages/cards/card8.png")
@@ -193,13 +196,11 @@ class Block :
         self.tall = 0
         self.owned = 5
         self.visit = 0
+        self.olympic = False
         self.building = []
-        self.bd1Price = 0
-        self.bd1Tall = 0
-        self.bd2Price = 0
-        self.bd2Tall = 0
-        self.bd3Price = 0
-        self.bd3Tall = 0
+        self.building = []
+        self.bdPrice = [0,0,1,1,2,2]
+        self.bdTall = [0,0,1,1,2,2]
     def buy(self,turn) :
         self.owned = turn
     def build(self,type) :
@@ -275,6 +276,10 @@ def passStart(pos1,pos2) :
 def setPlayers(arr,num) :
     for i in range(num) :
         arr.append(Player())
+def cardsSwap(arr,num1,num2) :
+    arr[num1] = temp
+    arr[num1] = arr[num2]
+    arr[num2] = temp
 def drawDice(arr):
     match arr[0] :
         case 1 :
@@ -390,7 +395,6 @@ while isGameLogicRunning :
                                 if distance(backtoMenuButton_Cpos,click_pos) <= 30:
                                     event_type = 1 #-> GameMenu
                                     isGameRuelRunning = False
-                                    print('GameRule to GameMenu')
                 screen.fill(woodBGColor)   
                 match page :
                     case 1:
@@ -432,7 +436,6 @@ while isGameLogicRunning :
                         if distance(gameNumberCheckButton_Cpos,click_pos) < 20 :
                                     event_type = 4 #->Game
                                     isGameNumberRunning = False
-                                    print('SelectGameNumber to Game')
                 match gameNumber :
                     case 2 :
                         screen.blit(selectGameNumber2,(0,0))
@@ -444,9 +447,24 @@ while isGameLogicRunning :
         #Game
         case 4 :
             if fromInGameMenu :
+                #general setting
+                phase = 1
+                unis_phase = 1
                 turn = 0
+                isTurnAdd = False
+                haveRaido = False
+                haveComplimentaryTicket = False
+                #players
+                players = []
+                setPlayers(players,gameNumber)
+                failed_players = []
+                #blocks
+                #dice
                 dice = []
+                #cards
                 cards = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+                for i in range(30) :
+                    cardsSwap(cards,random.randint(0,20),random.randint(0,20))
             while isGameRunning :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -459,9 +477,188 @@ while isGameLogicRunning :
                             mevent_type = 4
                             isGameRunning = False
                             isInGameMenuRunning = True
-                    screen.blit(mapBoard,mapBoard_pos)
-                    drawGameUI(gameNumber)
-                    drawTurnMarker(turn)
+                        screen.blit(mapBoard,mapBoard_pos)
+                        drawGameUI(gameNumber)
+                        drawTurnMarker(turn)
+                        match phase :
+                        #[움직이기 전]
+                            #<case 1> - 파산한 플레이어 확인
+                            case 1 :
+                                if players[turn].fortune <= 0 :
+                                    turn+=1
+                                else :
+                                    phase = 2
+                                #-차례인 플레이어가 파산했다면 턴 증가
+                                #-아니라면 <2>로 이동
+                            #<case 2> - 현위치의 블록이 무인도, 세계여행인 경우 확인
+                            case 2 :
+                                x = players[turn].pos[0]
+                                y = players[turn].pos[1]
+                                current_block_type = blocks[x][y].type
+                                if current_block_type == 2 :
+                                    phase = 3
+                                elif current_block_type == 4 :
+                                    phase = 6
+                                else :
+                                    phase = 4
+                                #-현위치의 블록이 무인도이면 <3>으로 이동
+                                #-현위치의 블록이 세계여행이라면 <6>으로 이동
+                            #<case 3> - 무인도인 경우 아이템 유무를 확인 / 아이템 사용 여부를 확인 / 무인도에서 3턴이 지난 경우를 확인
+                            case 3 :
+                                if players[turn].inUnIsTurn <= 3 :
+                                    for i in range(players[item]) :
+                                        if i == 4 :
+                                            haveRaido = True
+                                    if haveRaido :
+                                        screen.blit(card4YorNI,gamePhaseMenu_pos)
+                                        if distance(phaseMenuYesButton_Cpos,click_pos) :
+                                            phase = 4
+                                        if distance(phaseMenuNoButton_Cpos,click_pos) :
+                                            phase = 5
+                                    else :
+                                        phase = 5
+                                else :
+                                    phse = 5
+                            #-(1-라디오가 있다면)
+                            #-사용 여부 확인
+                            #-(2-사용한다면-O을 클릭한다면)
+                            #-<4>로 이동
+                            #-(2-사용하지 않는다면-X를 클릭한다면)
+                            #-<5>로 이동
+                            #-(1-라디오가 없다면)
+                            #-<5>로 이동
+                        #[움직이기]
+                        #<case 4> - 주사위를 굴리고 움직이기
+                        case 4 :
+                            screen.blit(diceButton,diceButton_pos)
+                            if distance(diceButton,diceButton_Cpos)
+                                dice[0] = random.randint(1,6)
+                                dice[1] = random.randint(1,6)
+                                before_pos = players[turn].pos
+                                print('before :',players[turn].pos)
+                                players[turn].move(add_pos + dice[0]+dice[1])
+                                after_pos = players[turn].pos
+                                print('after :',players[turn].pos)
+                                phase = 7
+                            #-(1-주사위 버튼을 누르면)
+                            #-주사위 굴리기
+                            #-플레이어 이동
+                            #-<7>로 이동
+                        #<case 5> - 움직이기 전 위치가 무인도인 경우 움직이기
+                        case 5 :
+                            match unis_phase :
+                                case 1 :
+                                    screen.blit(diceButton,diceButton_pos)
+                                    if distance(diceButton,diceButton_Cpos)
+                                        dice[0] = random.randint(1,6)
+                                        dice[1] = random.randint(1,6)
+                                        before_pos = players[turn].pos
+                                        print('before :',players[turn].pos)
+                                        unis_phase = 2
+                                case 2 :
+                                    if isDouble(dice) or players[turn].inUnIsTurn:
+                                        players[turn].move(add_pos + dice[0]+dice[1])
+                                        after_pos = players[turn].pos
+                                        print('after :',players[turn].pos)
+                                        phase = 8
+                                    else :
+                                        phase = 15
+                            #-(1-주사위 버튼을 누르면)
+                            #-주사위 굴리기
+                            #-(2-더블이라면 or 무인도에서 3턴 이상 지났다면)
+                            #-플레이어 이동
+                            #-<8>로 이동
+                            #-아니면 <15>로 이동
+                        #<case 6> - 세계여행인 경우 블록 선택 후 움직이기
+                        case 6 :
+                            #여기부터
+                            #-(블록선택) 개발중
+                            #-선택한 곳으로 이동
+                            #-<9>로 이동
+                            #[움직인 후]
+                        #<case 7> - 더블인 경우 다시 굴리기
+                        case 7 :
+                            #-(1-더블이면)
+                            #-현재 주사위 눈 수 만큼 temp에 저장
+                            #-<4>로 이동
+                        #<case 8> - 출발지를 지났는지 확인 후 월급 지급
+                        case 8 :
+                            #-(1-출발지를 지났다면)
+                            #-월급 지급
+                        #<case 9> - 블록 종류 확인 종류에 따라 실행
+                        case 9 :
+                            #-(1-일반블록이면)
+                            #-<10>으로 이동
+                            #-(1-무인도이면)
+                            #-<11>로 이동
+                            #-(1-올림픽이면)
+                            #-<12>로 이동
+                            #-(1-세게여행이면)
+                            #-<13>으로 이동
+                            #-(1-찬스카드이면)
+                            #-<14>로 이동
+                        #<case 10> - 일반 블록인 경우
+                        case 10 :
+                            #-(1-자신이 소유한 블록이면)
+                            #-(2-현재 위치 블록의 방문 횟수가 2번 이상이면 and 현재 위치 블록의 건물의 수가 1개 이하이면)
+                            #-(버튼을 클릭하여 종류 선택)
+                            #-현재 위치에 건물 종류 받기
+                            ##현재 보유한 돈으로 지을 수 있는 건물 버튼만 출력
+                            #-(3-별장이면)
+                            #-현재 위치 블록의 별장 짓기
+                            #-(3-빌딩이면)
+                            #-현재 위치 블록의 빌딩 짓기
+                            #-(3-호텔이면)
+                            #-현재 위치 블록의 호텔 짓기
+                            #-(1-상대가 소유한 블록이면)
+                            #-(2-우대권이 있다면)
+                            #-사용 여부 확인
+                            #-(3-사용한다면-O을 클릭한다면)
+                            #-<15>로 이동
+                            #-(3-사용하지 않는다면-X를 클릭한다면)
+                            #-통행료 지불
+                            #-<15>로 이동
+                            #-(2-우대권이 없다면)
+                            #-통행료 지불
+                            #-<15>로 이동
+                            #-(1-아무도 소유하지 않은 블록이면)
+                            #-(2-보유한 재산으로 구매 할 수 있다면)
+                            #-(2-구매한다면-O를 클릭한다면)
+                            #-블록을 구매
+                            #-(3-구매한다면-X를 클릭한다면)
+                            #-<15>로 이동
+                        #<case 11> - 무인도인 경우
+                        case 11 :
+                            #-<15>로 이동
+                        #<case 12> - 올림픽인 경우
+                        case 12 :
+                            #-(1-자신이 소유한 블록이 있다면)
+                            #-(블록선택) 개발중
+                            #-(2-선택한 블록이 자신의 소유이면)
+                            #-버프주기
+                            #-(2-자신의 소유가 아니라면)
+                            #-다시 선택
+                            #-(1-없다면)
+                            #-<15>로 이동
+                        #<case 13> - 세계여행인 경우
+                        case 13 :
+                            #-<15>로 이동
+                        #<case 14> - 찬스카드인 경우
+                        case 14 :
+                            #-효과 발동
+                            #-다음 버튼을 누르면
+                            #-<15>로 이동
+                        #<case 15> - 후반부이면 건물 사기
+                        case 15 :
+                        #[턴 종료]
+                        #<case 16> - 파산 조건 확인
+                        case 16 :
+                        #<case 17> - 승리 조건 확인
+                        case 17 :
+                        #<case 18> - 방문 횟수 증가
+                        case 19 :
+                        #<case 19> - 턴 증가
+                        case 20 :
         case 5 :
             while isEndRunning :
                 for event in pygame.event.get():

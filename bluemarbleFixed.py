@@ -195,12 +195,8 @@ class Block :
         self.owned = 5
         self.visit = 0
         self.building = []
-        self.bd1Price = 0
-        self.bd1Tall = 0
-        self.bd2Price = 0
-        self.bd2Tall = 0
-        self.bd3Price = 0
-        self.bd3Tall = 0
+        self.bdPrice = [0,0,1,1,2,2]
+        self.bdTall = [0,0,1,1,2,2]
     def buy(self,turn) :
         self.owned = turn
     def build(self,type) :
