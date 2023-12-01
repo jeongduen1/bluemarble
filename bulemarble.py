@@ -11,7 +11,6 @@ pygame.init()
 ###GeneralSetting###
 
 
-
 #######Colors#######
 white = (255,255,255)
 woodBGColor = (235,178,126)
@@ -19,8 +18,6 @@ backGroundColor = (125,178,73)
 black = (0,0,0)
 darkGray = (89,89,89)
 #######Colors#######
-
-
 
 #######Images#######
 
@@ -161,6 +158,8 @@ phaseMenuPlustButton_Cpos = (321, 725)
 phaseMenuMinusButton_Cpos = (753, 725)
 phaseMenuNextButton_pos1 = (366,750)
 phaseMenuNextButton_pos2 = (879,840)
+#Ending
+endingPhase = pygame.image.load("images/5.Ending/EndPhase.png").convert()
 ##InGameMenuImages##
 #images
 inGameMenu = pygame.image.load("images/6.InGameMenuImages/InGameMenu.png").convert()
@@ -183,7 +182,7 @@ normal_font = pygame.font.Font("fonts/HakgyoansimSantteutdotumM.ttf", 50)
 #player
 class Player :
     def __init__(self) :
-        self.fortune = 500000
+        self.fortune = 2000000
         self.items = []
         self.pos = [0,0]
         self.lap = 0
@@ -354,6 +353,7 @@ isGameLogicRunning = True
 #1 - Menu / 2 - GameRule / 3 - SelectGameNumber / 4 - Game / 5 - Ending / 6 - InGameMenu
 event_type = 1
 mevent_type = 1
+list = []
 fromInGameMenu = False
 while isGameLogicRunning :
     isMenuRunning = True
@@ -449,10 +449,10 @@ while isGameLogicRunning :
                             case 4 :
                                 if clickButton(gameNumberMinusButton_pos1,gameNumberMinusButton_pos2,click_pos) :
                                     gameNumber -= 1
-                        if distance(gameNumberCheckButton_Cpos,click_pos) < 20 :
-                                    event_type = 4 #->Game
-                                    fromInGameMenu = True
-                                    isGameNumberRunning = False
+                        if distance(gameNumberCheckButton_Cpos,click_pos) <= 20 :
+                            event_type = 4 #->Game
+                            fromInGameMenu = True
+                            isGameNumberRunning = False
                 match gameNumber :
                     case 2 :
                         screen.blit(selectGameNumber2,(0,0))
@@ -489,7 +489,7 @@ while isGameLogicRunning :
                 olympic_textX = 0
                 have_block = False
                 #dice
-                dice = []
+                dice = [0,0]
                 tempDice = 0
                 #cards
                 tempCard = 0
@@ -499,6 +499,94 @@ while isGameLogicRunning :
                 for i in range(30) :
                     cardsSwap(cards,random.randint(0,20),random.randint(0,20))
             while isGameRunning :
+                #이미지 불러오기
+                screen.blit(mapBoard,mapBoard_pos)
+                drawGameUI(gameNumber)
+                drawTurnMarker(turn)
+                match phase :
+                #[움직이기 전]
+                    #<case 1> - 파산한 플레이어 확인
+                    case 1 :
+                        isloading += 1
+                    case 2 :
+                        isloading += 1
+                    case 3 :
+                        if haveRaido :
+                            screen.blit(card4YorNI,gamePhaseMenu_pos)
+                    case 4 :
+                        screen.blit(diceButton,diceButton_pos)
+                    case 5 :
+                        match unis_phase :
+                            case 1 :
+                                screen.blit(diceButton,diceButton_pos)
+                    case 6 :
+                        screen.blit(selectWorldTour_pos,gamePhaseMenu_pos)
+                        match worldTour_phase :
+                            case 1 :
+                                text = blocks[worldTour_pos[0]][worldTour_pos[1]].name
+                                worldTourBlockName_text = normal_font.render(text,True,black)
+                                if len(text) == 2 :
+                                    worldTour_textX = 313
+                                elif len(text) == 3 :
+                                    worldTour_textX = 278
+                                elif len(text) == 4 :
+                                    worldTour_textX = 253
+                                else :
+                                    worldTour_textX = 128
+                                screen.blit(worldTourBlockName_text,(gamePhaseMenu_pos[0]+worldTour_textX,gamePhaseMenu_pos[1]+100))
+                    case 7 :
+                        screen.blit(double,gamePhaseMenu_pos)
+                    case 8 :
+                        screen.blit(startMenu,gamePhaseMenu_pos)
+                    case 9 :
+                        isloading += 1
+                    case 10 :
+                        screen.blit(selectOlympicTour_pos,gamePhaseMenu_pos)
+                        match normal_phase :
+                            case 1 :
+                                screen.blit(buybuilding,gamePhaseMenu_pos)
+                            case 2 :
+                                screen.blit(card5YorNI,gamePhaseMenu_pos)
+                            case 3 :
+                                text = blocks[x][y].name
+                                buyBlock_text = normal_font.render(text,True,black)
+                                if len(text) == 2 :
+                                    buyBlock_textX = 313
+                                elif len(text) == 3 :
+                                    buyBlock_textX = 278
+                                elif len(text) == 4 :
+                                    buyBlock_textX = 253
+                                else :
+                                    buyBlock_textX = 128
+                                screen.blit(buyBlock_text,(gamePhaseMenu_pos[0]+buyBlock_textX,gamePhaseMenu_pos[1]+100))
+                    case 11 :
+                        screen.blit(startMenu,gamePhaseMenu_pos)
+                    case 12 :
+                        screen.blit(uninhabitedIslandMenu,gamePhaseMenu_pos)
+                    case 13 :
+                        screen.blit(worldTourMenu,gamePhaseMenu_pos)
+                        text = blocks[olympic_pos[0]][olympic_pos[1]].name
+                        olympicBlockName_text = normal_font.render(text,True,black)
+                        if len(text) == 2 :
+                            olympic_textX = 313
+                        elif len(text) == 3 :
+                            olympic_textX = 278
+                        elif len(text) == 4 :
+                            olympic_textX = 253
+                        else :
+                            olympic_textX = 128
+                        screen.blit(olympicBlockName_text,(gamePhaseMenu_pos[0]+olympic_textX,gamePhaseMenu_pos[1]+100))
+                    case 14 :
+                        screen.blit(worldTourMenu,gamePhaseMenu_pos)
+                    case 15 :
+                        isloading += 1
+                    case 16 :
+                        isloading += 1
+                    case 17 :
+                        isloading += 1
+                    case 19 :
+                        isloading += 1
+                pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit()
@@ -510,9 +598,6 @@ while isGameLogicRunning :
                             mevent_type = 4
                             isGameRunning = False
                             isInGameMenuRunning = True
-                        screen.blit(mapBoard,mapBoard_pos)
-                        drawGameUI(gameNumber)
-                        drawTurnMarker(turn)
                         match phase :
                         #[움직이기 전]
                             #<case 1> - 파산한 플레이어 확인
@@ -990,96 +1075,18 @@ while isGameLogicRunning :
                                 turn+=1
                                 if turn >= gameNumber :
                                     turn = 0
-                #이미지 불러오기
-                match phase :
-                #[움직이기 전]
-                    #<case 1> - 파산한 플레이어 확인
-                    case 1 :
-                        isloading += 1
-                    case 2 :
-                        isloading += 1
-                    case 3 :
-                        if haveRaido :
-                            screen.blit(card4YorNI,gamePhaseMenu_pos)
-                    case 4 :
-                        screen.blit(diceButton,diceButton_pos)
-                    case 5 :
-                        match unis_phase :
-                            case 1 :
-                                screen.blit(diceButton,diceButton_pos)
-                    case 6 :
-                        screen.blit(selectWorldTour_pos,gamePhaseMenu_pos)
-                        match worldTour_phase :
-                            case 1 :
-                                text = blocks[worldTour_pos[0]][worldTour_pos[1]].name
-                                worldTourBlockName_text = normal_font.render(text,True,black)
-                                if len(text) == 2 :
-                                    worldTour_textX = 313
-                                elif len(text) == 3 :
-                                    worldTour_textX = 278
-                                elif len(text) == 4 :
-                                    worldTour_textX = 253
-                                else :
-                                    worldTour_textX = 128
-                                screen.blit(worldTourBlockName_text,(gamePhaseMenu_pos[0]+worldTour_textX,gamePhaseMenu_pos[1]+100))
-                    case 7 :
-                        screen.blit(double,gamePhaseMenu_pos)
-                    case 8 :
-                        screen.blit(startMenu,gamePhaseMenu_pos)
-                    case 9 :
-                        isloading += 1
-                    case 10 :
-                        screen.blit(selectOlympicTour_pos,gamePhaseMenu_pos)
-                        match normal_phase :
-                            case 1 :
-                                screen.blit(buybuilding,gamePhaseMenu_pos)
-                            case 2 :
-                                screen.blit(card5YorNI,gamePhaseMenu_pos)
-                            case 3 :
-                                text = blocks[x][y].name
-                                buyBlock_text = normal_font.render(text,True,black)
-                                if len(text) == 2 :
-                                    buyBlock_textX = 313
-                                elif len(text) == 3 :
-                                    buyBlock_textX = 278
-                                elif len(text) == 4 :
-                                    buyBlock_textX = 253
-                                else :
-                                    buyBlock_textX = 128
-                                screen.blit(buyBlock_text,(gamePhaseMenu_pos[0]+buyBlock_textX,gamePhaseMenu_pos[1]+100))
-                    case 11 :
-                        screen.blit(startMenu,gamePhaseMenu_pos)
-                    case 12 :
-                        screen.blit(uninhabitedIslandMenu,gamePhaseMenu_pos)
-                    case 13 :
-                        screen.blit(worldTourMenu,gamePhaseMenu_pos)
-                        text = blocks[olympic_pos[0]][olympic_pos[1]].name
-                        olympicBlockName_text = normal_font.render(text,True,black)
-                        if len(text) == 2 :
-                            olympic_textX = 313
-                        elif len(text) == 3 :
-                            olympic_textX = 278
-                        elif len(text) == 4 :
-                            olympic_textX = 253
-                        else :
-                            olympic_textX = 128
-                        screen.blit(olympicBlockName_text,(gamePhaseMenu_pos[0]+olympic_textX,gamePhaseMenu_pos[1]+100))
-                    case 14 :
-                        screen.blit(worldTourMenu,gamePhaseMenu_pos)
-                    case 15 :
-                        isloading += 1
-                    case 16 :
-                        isloading += 1
-                    case 17 :
-                        isloading += 1
-                    case 19 :
-                        isloading += 1
+        #Ending 
         case 5 :
             while isEndRunning :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         sys.exit()
+                screen.blit(endingPhase,(0,0))
+                #for i in range(len(players)) :
+                #    if players[i].fortune < players[i+1] :
+                #        
                 pygame.display.update()
+        #InGameMenu
         case 6 :
             while isInGameMenuRunning :
                 for event in pygame.event.get():
